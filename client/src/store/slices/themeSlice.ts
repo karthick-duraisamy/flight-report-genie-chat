@@ -1,35 +1,119 @@
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-export type ThemeType = 'light' | 'dark' | 'yellow' | 'blue' | 'green';
+export interface ThemeConfig {
+  name: string;
+  type: 'Light' | 'Dark' | 'Colored';
+  fontFamily: string;
+  description: string;
+  colors: {
+    primary: string;
+    secondary: string;
+    background: string;
+    surface: string;
+  };
+}
+
+export const themes: Record<string, ThemeConfig> = {
+  light: {
+    name: 'Light Theme',
+    type: 'Light',
+    fontFamily: 'Open Sans, sans-serif',
+    description: 'Clean and minimal light interface',
+    colors: {
+      primary: '#3b82f6',
+      secondary: '#64748b',
+      background: '#ffffff',
+      surface: '#f8fafc',
+    },
+  },
+  dark: {
+    name: 'Dark Theme',
+    type: 'Dark',
+    fontFamily: 'Times New Roman, serif',
+    description: 'Elegant dark interface with serif fonts',
+    colors: {
+      primary: '#60a5fa',
+      secondary: '#94a3b8',
+      background: '#0f172a',
+      surface: '#1e293b',
+    },
+  },
+  yellow: {
+    name: 'Yellow Theme',
+    type: 'Colored',
+    fontFamily: 'Arial, sans-serif',
+    description: 'Warm and energetic color scheme',
+    colors: {
+      primary: '#f59e0b',
+      secondary: '#92400e',
+      background: '#fffbeb',
+      surface: '#fef3c7',
+    },
+  },
+  blue: {
+    name: 'Blue Theme',
+    type: 'Colored',
+    fontFamily: 'Roboto, sans-serif',
+    description: 'Professional blue interface',
+    colors: {
+      primary: '#2563eb',
+      secondary: '#1e40af',
+      background: '#eff6ff',
+      surface: '#dbeafe',
+    },
+  },
+  green: {
+    name: 'Green Theme',
+    type: 'Colored',
+    fontFamily: 'Inter, sans-serif',
+    description: 'Natural and calming green theme',
+    colors: {
+      primary: '#16a34a',
+      secondary: '#15803d',
+      background: '#f0fdf4',
+      surface: '#dcfce7',
+    },
+  },
+};
 
 interface ThemeState {
-  currentTheme: ThemeType;
-  availableThemes: ThemeType[];
+  currentTheme: string;
+  isThemeSelectorOpen: boolean;
 }
 
 const initialState: ThemeState = {
   currentTheme: 'light',
-  availableThemes: ['light', 'dark', 'yellow', 'blue', 'green'],
+  isThemeSelectorOpen: false,
 };
 
 const themeSlice = createSlice({
   name: 'theme',
   initialState,
   reducers: {
-    setTheme: (state, action: PayloadAction<ThemeType>) => {
+    setTheme: (state, action: PayloadAction<string>) => {
       state.currentTheme = action.payload;
-      // Store theme preference in localStorage
-      localStorage.setItem('airline-chatbot-theme', action.payload);
-    },
-    initializeTheme: (state) => {
-      const savedTheme = localStorage.getItem('airline-chatbot-theme') as ThemeType;
-      if (savedTheme && state.availableThemes.includes(savedTheme)) {
-        state.currentTheme = savedTheme;
+      // Apply font family to document body
+      if (typeof document !== 'undefined') {
+        const theme = themes[action.payload];
+        if (theme) {
+          document.body.style.fontFamily = theme.fontFamily;
+          // Update CSS custom properties
+          const root = document.documentElement;
+          Object.entries(theme.colors).forEach(([key, value]) => {
+            root.style.setProperty(`--color-${key}`, value);
+          });
+        }
       }
+    },
+    toggleThemeSelector: (state) => {
+      state.isThemeSelectorOpen = !state.isThemeSelectorOpen;
+    },
+    setThemeSelectorOpen: (state, action: PayloadAction<boolean>) => {
+      state.isThemeSelectorOpen = action.payload;
     },
   },
 });
 
-export const { setTheme, initializeTheme } = themeSlice.actions;
+export const { setTheme, toggleThemeSelector, setThemeSelectorOpen } = themeSlice.actions;
 export default themeSlice.reducer;
