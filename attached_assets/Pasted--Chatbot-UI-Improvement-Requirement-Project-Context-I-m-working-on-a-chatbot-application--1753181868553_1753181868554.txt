@@ -1,0 +1,84 @@
+# ✨ Chatbot UI Improvement Requirement
+
+## 📌 Project Context
+
+I’m working on a chatbot application built using **React**, **Vite**, and **Ant Design**. The current UI (as shown in the attached screenshots) lacks a modern feel and doesn't deliver a great user experience.
+
+The goal is to **redesign the chatbot layout and theme to match the look and feel of ChatGPT**, while also improving responsiveness and usability.
+
+---
+
+## 🎯 Key Requirements
+
+### 1. **Font & Typography**
+- Use modern, clean font styles similar to ChatGPT.
+- Adjust font sizes appropriately for:
+  - Title (`Airline Report Assistant`)
+  - User messages
+  - Bot responses
+  - Input placeholder
+
+---
+
+### 2. **Chat Layout Redesign**
+- Center or maximize the chat window area.
+- Reduce excessive white space.
+- Improve message flow:
+  - Chat bubbles for user and bot
+  - Distinct styling for user vs bot
+  - Subtle background and border radius
+- Add entry animations for messages (optional but nice to have)
+
+---
+
+### 3. **Left Sidebar - Theme Panel Improvements**
+- Replace basic color blocks with modern card-style theme options or toggle buttons.
+- Add:
+  - Hover/focus states
+  - Labels/icons for clarity
+- Make sidebar responsive or collapsible
+
+---
+
+### 4. **Responsiveness**
+- Ensure proper layout across:
+  - Desktop
+  - Tablet
+  - Mobile
+- Keep chat input and recent conversations accessible and properly sized on all screens
+
+---
+
+### 5. **Chat Input Bar**
+- Rounded input box with padding (inspired by ChatGPT)
+- Clear “Send” button with hover effect
+- Subtle placeholder text (e.g., *"Ask about airline reports, schedules, or analytics..."*)
+
+---
+
+### 6. **Theme Customization (Advanced Option)**
+- Introduce a card layout or modal popup to switch themes
+- Light/dark mode support with defined color palettes
+- Live theme previews in selection area
+
+---
+
+## 🚫 Restrictions
+- **Tailwind CSS is not allowed**
+  - Do not include Tailwind or any related configurations
+  - Tailwind packages should not appear in `package.json`
+
+---
+
+## 📦 Suggested Tools/Libraries (Optional)
+- For animations: `framer-motion`
+- For custom styling: `styled-components` or `@emotion/react`
+- For icons: `@ant-design/icons` or `lucide-react`
+
+---
+
+## 📎 Reference
+Screenshots attached showing the current UI to be redesigned.
+
+---
+
