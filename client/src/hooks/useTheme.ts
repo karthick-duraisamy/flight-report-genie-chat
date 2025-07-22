@@ -2,16 +2,11 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { useEffect } from 'react';
 import { RootState } from '@/store';
-import { setTheme, initializeTheme, ThemeType } from '@/store/slices/themeSlice';
+import { setTheme, themes } from '@/store/slices/themeSlice';
 
 export const useTheme = () => {
   const dispatch = useDispatch();
-  const { currentTheme, availableThemes } = useSelector((state: RootState) => state.theme);
-
-  // Initialize theme on mount
-  useEffect(() => {
-    dispatch(initializeTheme());
-  }, [dispatch]);
+  const { currentTheme } = useSelector((state: RootState) => state.theme);
 
   // Apply theme to document root
   useEffect(() => {
@@ -28,7 +23,7 @@ export const useTheme = () => {
     return () => clearTimeout(timer);
   }, [currentTheme]);
 
-  const changeTheme = (theme: ThemeType) => {
+  const changeTheme = (theme: string) => {
     // Add transition class before changing theme
     document.documentElement.classList.add('theme-transition');
     dispatch(setTheme(theme));
@@ -36,7 +31,7 @@ export const useTheme = () => {
 
   return {
     currentTheme,
-    availableThemes,
+    availableThemes: themes,
     changeTheme,
   };
 };

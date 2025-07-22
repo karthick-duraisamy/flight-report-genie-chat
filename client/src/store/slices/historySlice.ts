@@ -1,27 +1,18 @@
-
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-export interface HistoryItem {
+interface HistoryItem {
   id: string;
   title: string;
-  date: Date;
-  messageCount: number;
+  timestamp: number;
+  sessionId: string;
 }
 
 interface HistoryState {
   items: HistoryItem[];
-  searchTerm: string;
-  sortBy: 'date' | 'title';
-  sortOrder: 'asc' | 'desc';
-  isEditingTitle: string | null;
 }
 
 const initialState: HistoryState = {
   items: [],
-  searchTerm: '',
-  sortBy: 'date',
-  sortOrder: 'desc',
-  isEditingTitle: null,
 };
 
 const historySlice = createSlice({
@@ -37,32 +28,11 @@ const historySlice = createSlice({
         item.title = action.payload.title;
       }
     },
-    removeHistoryItem: (state, action: PayloadAction<string>) => {
-      state.items = state.items.filter(item => item.id !== action.payload);
-    },
-    setSearchTerm: (state, action: PayloadAction<string>) => {
-      state.searchTerm = action.payload;
-    },
-    setSortBy: (state, action: PayloadAction<'date' | 'title'>) => {
-      state.sortBy = action.payload;
-    },
-    setSortOrder: (state, action: PayloadAction<'asc' | 'desc'>) => {
-      state.sortOrder = action.payload;
-    },
-    setEditingTitle: (state, action: PayloadAction<string | null>) => {
-      state.isEditingTitle = action.payload;
+    clearHistory: (state) => {
+      state.items = [];
     },
   },
 });
 
-export const {
-  addHistoryItem,
-  updateHistoryTitle,
-  removeHistoryItem,
-  setSearchTerm,
-  setSortBy,
-  setSortOrder,
-  setEditingTitle,
-} = historySlice.actions;
-
+export const { addHistoryItem, updateHistoryTitle, clearHistory } = historySlice.actions;
 export default historySlice.reducer;

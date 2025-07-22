@@ -58,37 +58,33 @@ const ThemeSelector: React.FC = () => {
                 </button>
               </div>
 
-              <div className="cls-cb-theme-options">
-                {Object.entries(themes).map(([themeKey, theme]) => (
+              <div className="cls-cb-theme-grid">
+                {Object.entries(themes).map(([key, theme]) => (
                   <motion.div
-                    key={themeKey}
-                    className={`cls-cb-theme-card ${currentTheme === themeKey ? 'cls-cb-theme-selected' : ''}`}
-                    onClick={() => handleThemeSelect(themeKey)}
+                    key={key}
+                    className={`cls-cb-theme-card ${currentTheme === key ? 'cls-cb-theme-selected' : ''}`}
+                    onClick={() => handleThemeSelect(key)}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    transition={{ type: 'spring', damping: 20 }}
                   >
-                    <div className="cls-cb-theme-preview" style={{
-                      background: `linear-gradient(135deg, ${theme.colors.background} 30%, ${theme.colors.primary} 100%)`
-                    }}>
-                      {currentTheme === themeKey && (
-                        <motion.div
-                          className="cls-cb-theme-checkmark"
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          transition={{ type: 'spring', damping: 15 }}
-                        >
-                          ✓
-                        </motion.div>
-                      )}
+                    <div className="cls-cb-theme-preview" style={{ backgroundColor: theme.colors.primary }}>
+                      <div className="cls-cb-theme-preview-bg" style={{ backgroundColor: theme.colors.background }}>
+                        <div className="cls-cb-theme-preview-surface" style={{ backgroundColor: theme.colors.surface }}></div>
+                      </div>
                     </div>
                     
                     <div className="cls-cb-theme-info">
-                      <div className="cls-cb-theme-name">{theme.name}</div>
-                      <div className="cls-cb-theme-type">{theme.type}</div>
-                      <div className="cls-cb-theme-font">{theme.fontFamily.split(',')[0]}</div>
-                      <div className="cls-cb-theme-description">{theme.description}</div>
+                      <h4 className="cls-cb-theme-name">{theme.name}</h4>
+                      <p className="cls-cb-theme-type">{theme.type}</p>
+                      <p className="cls-cb-theme-description">{theme.description}</p>
+                      <p className="cls-cb-theme-font">{theme.fontFamily}</p>
                     </div>
+
+                    {currentTheme === key && (
+                      <div className="cls-cb-theme-checkmark">
+                        ✓
+                      </div>
+                    )}
                   </motion.div>
                 ))}
               </div>
