@@ -65,3 +65,7 @@ export const {
   useGetReportTemplatesQuery,
   useGenerateReportMutation,
 } = chatApi;
+
+// Add aliases for the component imports
+export const useGetReportsQuery = useGetReportDataQuery;
+export const useGetTemplatesQuery = useGetReportTemplatesQuery;

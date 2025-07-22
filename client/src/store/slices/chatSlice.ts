@@ -9,6 +9,7 @@ export interface Message {
   isHTML?: boolean;
   tableData?: any[];
   tableColumns?: any[];
+  data?: any;
 }
 
 export interface Conversation {
@@ -22,6 +23,8 @@ export interface Conversation {
 interface ChatState {
   conversations: Conversation[];
   currentConversationId: string | null;
+  currentSession: string | null;
+  messages: Message[];
   isLoading: boolean;
   inputValue: string;
 }
@@ -29,6 +32,8 @@ interface ChatState {
 const initialState: ChatState = {
   conversations: [],
   currentConversationId: null,
+  currentSession: null,
+  messages: [],
   isLoading: false,
   inputValue: '',
 };
@@ -44,12 +49,11 @@ const chatSlice = createSlice({
     setCurrentConversation: (state, action: PayloadAction<string>) => {
       state.currentConversationId = action.payload;
     },
-    addMessage: (state, action: PayloadAction<{ conversationId: string; message: Message }>) => {
-      const conversation = state.conversations.find(c => c.id === action.payload.conversationId);
-      if (conversation) {
-        conversation.messages.push(action.payload.message);
-        conversation.lastActivity = new Date();
-      }
+    setCurrentSession: (state, action: PayloadAction<string>) => {
+      state.currentSession = action.payload;
+    },
+    addMessage: (state, action: PayloadAction<Message>) => {
+      state.messages.push(action.payload);
     },
     updateConversationTitle: (state, action: PayloadAction<{ id: string; title: string }>) => {
       const conversation = state.conversations.find(c => c.id === action.payload.id);
@@ -76,6 +80,7 @@ const chatSlice = createSlice({
 export const {
   createConversation,
   setCurrentConversation,
+  setCurrentSession,
   addMessage,
   updateConversationTitle,
   setLoading,
