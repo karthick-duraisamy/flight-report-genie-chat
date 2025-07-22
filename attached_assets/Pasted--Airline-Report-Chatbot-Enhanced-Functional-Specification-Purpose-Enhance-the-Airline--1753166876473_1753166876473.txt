@@ -1,0 +1,89 @@
+# ✈️ Airline Report Chatbot – Enhanced Functional Specification
+
+## 🎯 Purpose
+
+Enhance the Airline Report Assistant chatbot interface and functionality to improve **usability, accessibility, maintainability**, and **performance**. This includes table rendering improvements, theming, animations, editable history items, Redux Toolkit integration, and component cleanup.
+
+---
+
+## 💬 Chatbot Features
+
+- ChatGPT-style chatbot UI for airline report generation.
+- Predefined & custom report templates.
+- Maintains **conversation/report history** for 7–14 days.
+- History panel placed on the **left side**, with **editable titles** for each past report.
+- Displays response in plain text or HTML (rich table format).
+
+---
+
+## 📐 UI/UX Enhancements
+
+### 🧾 Table Rendering
+- Prevent table header wrapping: use **horizontal scroll** for better readability on smaller screens.
+- Use **Ant Design Table** component.
+- Add support for **pagination** and **download options** (Excel, CSV, etc).
+
+### ✨ Visual Design
+- Use **Open Sans** as the default font.
+- Use **SCSS variables** for all color codes and themes.
+- Support **multiple themes**:
+  - Light (default)
+  - Dark
+  - Yellow
+  - Additional custom themes (min 2)
+
+### 🎞️ Animations
+- Smooth animation effects on user interaction:
+  - New message sent or received
+  - Table load or update
+  - Theme switching
+  - History selection or rename
+
+---
+
+## 🧠 State Management & Data Flow
+
+### 🛠️ Redux Toolkit Integration
+- Use Redux Toolkit for all **state management**.
+- Implement **RTK Query** for reading data from **local JSON files** (mocking API behavior).
+- Store includes:
+  - Current chat session
+  - History (editable names)
+  - Report data (from JSON)
+  - Selected theme
+
+---
+
+## 🧹 Code Maintenance
+
+- Review all project components.
+- Identify and **remove unused components**.
+- Ensure each component is modular, optimized, and scoped.
+
+---
+
+## 🧱 Tech Stack Summary
+
+| Feature | Stack |
+|--------|-------|
+| Frontend | React (Vite) |
+| UI Framework | Ant Design |
+| State Management | Redux Toolkit + RTK Query |
+| Styling | SCSS (No Tailwind CSS) |
+| Font | Open Sans |
+| Response Data | JSON-based mock API |
+| Themes | Light, Dark, Yellow, +2 custom |
+| Animations | Smooth transition-based interactions |
+
+---
+
+## ✅ Acceptance Criteria
+
+- Horizontal scroll is applied to all tables if overflow occurs.
+- Theme switching updates the full UI dynamically.
+- Table and text responses render based on local JSON files.
+- History titles are user-editable in-place.
+- Application uses Redux Toolkit for store & API handling.
+- All unused components are removed.
+
+---
