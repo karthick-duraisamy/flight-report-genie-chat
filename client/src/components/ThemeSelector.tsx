@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -25,8 +24,12 @@ const ThemeSelector: React.FC = () => {
         onClick={handleToggle}
         aria-label="Toggle theme selector"
       >
-        <span className="cls-cb-theme-toggle-icon">🎨</span>
-        <span className="cls-cb-theme-toggle-text">Themes</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path 
+            d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z" 
+            fill="currentColor"
+          />
+        </svg>
       </button>
 
       <AnimatePresence>
@@ -39,53 +42,33 @@ const ThemeSelector: React.FC = () => {
               exit={{ opacity: 0 }}
               onClick={() => dispatch(setThemeSelectorOpen(false))}
             />
-            
-            <motion.div
-              className="cls-cb-theme-panel"
-              initial={{ x: '100%', opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: '100%', opacity: 0 }}
-              transition={{ type: 'spring', damping: 20, stiffness: 300 }}
-            >
-              <div className="cls-cb-theme-panel-header">
-                <h3 className="cls-cb-theme-panel-title">Choose Theme</h3>
-                <button
-                  className="cls-cb-theme-close-btn"
-                  onClick={() => dispatch(setThemeSelectorOpen(false))}
-                  aria-label="Close theme selector"
-                >
-                  ✕
-                </button>
-              </div>
 
-              <div className="cls-cb-theme-grid">
+            <motion.div
+              className="cls-cb-theme-dropdown"
+              initial={{ opacity: 0, scale: 0.95, y: -10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: -10 }}
+              transition={{ duration: 0.15, ease: "easeOut" }}
+            >
+              <div className="cls-cb-theme-dropdown-content">
                 {Object.entries(themes).map(([key, theme]) => (
-                  <motion.div
+                  <button
                     key={key}
-                    className={`cls-cb-theme-card ${currentTheme === key ? 'cls-cb-theme-selected' : ''}`}
+                    className={`cls-cb-theme-option ${currentTheme === key ? 'cls-cb-theme-selected' : ''}`}
                     onClick={() => handleThemeSelect(key)}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
                   >
                     <div className="cls-cb-theme-preview" style={{ backgroundColor: theme.colors.primary }}>
-                      <div className="cls-cb-theme-preview-bg" style={{ backgroundColor: theme.colors.background }}>
-                        <div className="cls-cb-theme-preview-surface" style={{ backgroundColor: theme.colors.surface }}></div>
-                      </div>
+                      {currentTheme === key && (
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="white">
+                          <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+                        </svg>
+                      )}
                     </div>
-                    
                     <div className="cls-cb-theme-info">
-                      <h4 className="cls-cb-theme-name">{theme.name}</h4>
-                      <p className="cls-cb-theme-type">{theme.type}</p>
-                      <p className="cls-cb-theme-description">{theme.description}</p>
-                      <p className="cls-cb-theme-font">{theme.fontFamily}</p>
+                      <span className="cls-cb-theme-name">{theme.name}</span>
+                      <span className="cls-cb-theme-font">{theme.fontFamily.split(',')[0]}</span>
                     </div>
-
-                    {currentTheme === key && (
-                      <div className="cls-cb-theme-checkmark">
-                        ✓
-                      </div>
-                    )}
-                  </motion.div>
+                  </button>
                 ))}
               </div>
             </motion.div>

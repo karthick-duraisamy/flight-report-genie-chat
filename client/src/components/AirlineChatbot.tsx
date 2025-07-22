@@ -144,7 +144,6 @@ const AirlineChatbot: React.FC = () => {
       <div className={`sidebar ${!sidebarOpen ? 'collapsed' : ''}`}>
         <div className="sidebar-header">
           <h2>Airline Assistant</h2>
-          <ThemeSelector />
         </div>
 
         <div className="history-list">
@@ -186,14 +185,19 @@ const AirlineChatbot: React.FC = () => {
       {/* Chat Area */}
       <div className="chat-area">
         <div className="chat-header">
-          <button
-            className="sidebar-toggle"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            aria-label="Toggle sidebar"
-          >
-            ☰
-          </button>
-          <h1 className="header-title">Airline Report Assistant</h1>
+          <div className="header-left">
+            <button
+              className="sidebar-toggle"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              aria-label="Toggle sidebar"
+            >
+              ☰
+            </button>
+            <h1 className="header-title">Airline Report Assistant</h1>
+          </div>
+          <div className="header-right">
+            <ThemeSelector />
+          </div>
         </div>
 
         <div className="chat-messages">

@@ -77,6 +77,50 @@ export const themes: Record<string, ThemeConfig> = {
   },
 };
 
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
+export const themes = {
+  light: {
+    name: 'Light Theme',
+    type: 'Light',
+    description: 'Clean and bright interface',
+    fontFamily: 'Open Sans, sans-serif',
+    colors: {
+      primary: '#3B82F6',
+      background: '#FFFFFF',
+      surface: '#F8FAFC',
+      text: '#1F2937',
+      border: '#E5E7EB'
+    }
+  },
+  dark: {
+    name: 'Dark Theme',
+    type: 'Dark',
+    description: 'Easy on the eyes in low light',
+    fontFamily: 'Times New Roman, serif',
+    colors: {
+      primary: '#6366F1',
+      background: '#111827',
+      surface: '#1F2937',
+      text: '#F9FAFB',
+      border: '#374151'
+    }
+  },
+  yellow: {
+    name: 'Yellow Theme',
+    type: 'Colored',
+    description: 'Bright and energetic design',
+    fontFamily: 'Arial, sans-serif',
+    colors: {
+      primary: '#F59E0B',
+      background: '#FFFBEB',
+      surface: '#FEF3C7',
+      text: '#92400E',
+      border: '#F9D71C'
+    }
+  }
+};
+
 interface ThemeState {
   currentTheme: string;
   isThemeSelectorOpen: boolean;

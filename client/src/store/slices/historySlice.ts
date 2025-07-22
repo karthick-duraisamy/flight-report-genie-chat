@@ -3,8 +3,8 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 interface HistoryItem {
   id: string;
   title: string;
-  timestamp: number;
-  sessionId: string;
+  date: Date;
+  messageCount: number;
 }
 
 interface HistoryState {
@@ -28,11 +28,14 @@ const historySlice = createSlice({
         item.title = action.payload.title;
       }
     },
+    removeHistoryItem: (state, action: PayloadAction<string>) => {
+      state.items = state.items.filter(item => item.id !== action.payload);
+    },
     clearHistory: (state) => {
       state.items = [];
     },
   },
 });
 
-export const { addHistoryItem, updateHistoryTitle, clearHistory } = historySlice.actions;
+export const { addHistoryItem, updateHistoryTitle, removeHistoryItem, clearHistory } = historySlice.actions;
 export default historySlice.reducer;
