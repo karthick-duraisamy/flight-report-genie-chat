@@ -1,7 +1,5 @@
-import AirlineChatbot from '../components/AirlineChatbot';
+import AirlineChatbot from "@/components/AirlineChatbot";
 
-const Index = () => {
+export default function Index() {
   return <AirlineChatbot />;
-};
-
-export default Index;
+}

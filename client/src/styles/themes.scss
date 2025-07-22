@@ -1,0 +1,239 @@
+
+// Open Sans font import
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap');
+
+// Base theme variables
+:root {
+  --font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  
+  // Animation durations
+  --transition-fast: 0.15s;
+  --transition-normal: 0.3s;
+  --transition-slow: 0.5s;
+  
+  // Border radius
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  
+  // Shadows
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+// Light Theme (Default)
+[data-theme="light"] {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-tertiary: #f1f5f9;
+  --bg-chat: #ffffff;
+  --bg-sidebar: #f8fafc;
+  --bg-message-user: #3b82f6;
+  --bg-message-bot: #f1f5f9;
+  --bg-hover: #f1f5f9;
+  --bg-active: #e2e8f0;
+  
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --text-tertiary: #94a3b8;
+  --text-inverse: #ffffff;
+  --text-user-message: #ffffff;
+  --text-bot-message: #1e293b;
+  
+  --border-primary: #e2e8f0;
+  --border-secondary: #cbd5e1;
+  --border-focus: #3b82f6;
+  
+  --accent-primary: #3b82f6;
+  --accent-secondary: #10b981;
+  --accent-warning: #f59e0b;
+  --accent-danger: #ef4444;
+  
+  --table-header-bg: #f8fafc;
+  --table-row-hover: #f1f5f9;
+  --table-border: #e2e8f0;
+}
+
+// Dark Theme
+[data-theme="dark"] {
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-tertiary: #334155;
+  --bg-chat: #0f172a;
+  --bg-sidebar: #1e293b;
+  --bg-message-user: #3b82f6;
+  --bg-message-bot: #334155;
+  --bg-hover: #334155;
+  --bg-active: #475569;
+  
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-tertiary: #94a3b8;
+  --text-inverse: #0f172a;
+  --text-user-message: #ffffff;
+  --text-bot-message: #f8fafc;
+  
+  --border-primary: #334155;
+  --border-secondary: #475569;
+  --border-focus: #3b82f6;
+  
+  --accent-primary: #3b82f6;
+  --accent-secondary: #10b981;
+  --accent-warning: #f59e0b;
+  --accent-danger: #ef4444;
+  
+  --table-header-bg: #1e293b;
+  --table-row-hover: #334155;
+  --table-border: #334155;
+}
+
+// Yellow Theme
+[data-theme="yellow"] {
+  --bg-primary: #fffbeb;
+  --bg-secondary: #fef3c7;
+  --bg-tertiary: #fde68a;
+  --bg-chat: #fffbeb;
+  --bg-sidebar: #fef3c7;
+  --bg-message-user: #f59e0b;
+  --bg-message-bot: #fde68a;
+  --bg-hover: #fde68a;
+  --bg-active: #fcd34d;
+  
+  --text-primary: #451a03;
+  --text-secondary: #92400e;
+  --text-tertiary: #d97706;
+  --text-inverse: #fffbeb;
+  --text-user-message: #ffffff;
+  --text-bot-message: #451a03;
+  
+  --border-primary: #fde68a;
+  --border-secondary: #fcd34d;
+  --border-focus: #f59e0b;
+  
+  --accent-primary: #f59e0b;
+  --accent-secondary: #10b981;
+  --accent-warning: #ef4444;
+  --accent-danger: #dc2626;
+  
+  --table-header-bg: #fef3c7;
+  --table-row-hover: #fde68a;
+  --table-border: #fde68a;
+}
+
+// Blue Theme
+[data-theme="blue"] {
+  --bg-primary: #eff6ff;
+  --bg-secondary: #dbeafe;
+  --bg-tertiary: #bfdbfe;
+  --bg-chat: #eff6ff;
+  --bg-sidebar: #dbeafe;
+  --bg-message-user: #2563eb;
+  --bg-message-bot: #bfdbfe;
+  --bg-hover: #bfdbfe;
+  --bg-active: #93c5fd;
+  
+  --text-primary: #1e3a8a;
+  --text-secondary: #1d4ed8;
+  --text-tertiary: #3b82f6;
+  --text-inverse: #eff6ff;
+  --text-user-message: #ffffff;
+  --text-bot-message: #1e3a8a;
+  
+  --border-primary: #bfdbfe;
+  --border-secondary: #93c5fd;
+  --border-focus: #2563eb;
+  
+  --accent-primary: #2563eb;
+  --accent-secondary: #10b981;
+  --accent-warning: #f59e0b;
+  --accent-danger: #ef4444;
+  
+  --table-header-bg: #dbeafe;
+  --table-row-hover: #bfdbfe;
+  --table-border: #bfdbfe;
+}
+
+// Green Theme
+[data-theme="green"] {
+  --bg-primary: #f0fdf4;
+  --bg-secondary: #dcfce7;
+  --bg-tertiary: #bbf7d0;
+  --bg-chat: #f0fdf4;
+  --bg-sidebar: #dcfce7;
+  --bg-message-user: #16a34a;
+  --bg-message-bot: #bbf7d0;
+  --bg-hover: #bbf7d0;
+  --bg-active: #86efac;
+  
+  --text-primary: #14532d;
+  --text-secondary: #166534;
+  --text-tertiary: #16a34a;
+  --text-inverse: #f0fdf4;
+  --text-user-message: #ffffff;
+  --text-bot-message: #14532d;
+  
+  --border-primary: #bbf7d0;
+  --border-secondary: #86efac;
+  --border-focus: #16a34a;
+  
+  --accent-primary: #16a34a;
+  --accent-secondary: #3b82f6;
+  --accent-warning: #f59e0b;
+  --accent-danger: #ef4444;
+  
+  --table-header-bg: #dcfce7;
+  --table-row-hover: #bbf7d0;
+  --table-border: #bbf7d0;
+}
+
+// Global styles
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  margin: 0;
+  padding: 0;
+  transition: background-color var(--transition-normal) ease,
+              color var(--transition-normal) ease;
+}
+
+// Animation classes
+.theme-transition {
+  transition: all var(--transition-normal) ease;
+}
+
+.message-enter {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: messageEnter var(--transition-normal) ease forwards;
+}
+
+.table-loading {
+  opacity: 0.6;
+  transition: opacity var(--transition-fast) ease;
+}
+
+@keyframes messageEnter {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  animation: fadeIn var(--transition-normal) ease;
+}
