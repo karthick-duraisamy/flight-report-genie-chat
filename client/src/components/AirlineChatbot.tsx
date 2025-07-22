@@ -1,75 +1,86 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../store';
-import { addMessage, setLoading, setCurrentSession, setInputValue } from '../store/slices/chatSlice';
-import { addHistoryItem } from '../store/slices/historySlice';
-import { useGetReportsQuery, useGetTemplatesQuery } from '../store/api/chatApi';
-import { Button } from './ui/button';
-import { Card } from './ui/card';
-import { ScrollArea } from './ui/scroll-area';
-import { Separator } from './ui/separator';
-import { Send, Bot, User, Menu, Plus, MessageSquare } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { RootState } from '@/store';
+import { addMessage, setCurrentSession } from '@/store/slices/chatSlice';
+import { addHistoryItem, updateHistoryTitle } from '@/store/slices/historySlice';
+import { useGetReportsQuery, useGetTemplatesQuery } from '@/store/api/chatApi';
+import { useTheme } from '@/hooks/useTheme';
+import ThemeSelector from './ThemeSelector';
 
 interface Message {
   id: string;
+  type: 'user' | 'bot';
   content: string;
-  role: 'user' | 'assistant';
   timestamp: Date;
+  data?: any;
 }
 
 const AirlineChatbot: React.FC = () => {
   const dispatch = useDispatch();
-  const { messages, isLoading, inputValue, currentSession } = useSelector((state: RootState) => state.chat);
+  const { currentTheme } = useTheme();
+  const { currentSession, messages } = useSelector((state: RootState) => state.chat);
+  const { items: historyItems } = useSelector((state: RootState) => state.history);
+
+  const [inputValue, setInputValue] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [editingHistoryId, setEditingHistoryId] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-  
+  const chatInputRef = useRef<HTMLInputElement>(null);
+
   const { data: reports } = useGetReportsQuery();
   const { data: templates } = useGetTemplatesQuery();
 
+  // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  // Focus input on load
+  useEffect(() => {
+    chatInputRef.current?.focus();
+  }, []);
+
   const handleSendMessage = async () => {
-    if (!inputValue.trim()) return;
+    if (!inputValue.trim() || isLoading) return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
+      type: 'user',
       content: inputValue,
-      role: 'user',
       timestamp: new Date(),
     };
 
     dispatch(addMessage(userMessage));
-    dispatch(setInputValue(''));
-    dispatch(setLoading(true));
+    setInputValue('');
+    setIsLoading(true);
 
-    // Simulate API response
+    // Simulate bot response with animation delay
     setTimeout(() => {
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: `I understand you're asking about: "${inputValue}". As your Airline Report Assistant, I can help you with flight schedules, passenger analytics, route performance, and operational reports. What specific information would you like me to analyze?`,
-        role: 'assistant',
+        type: 'bot',
+        content: 'Thank you for your inquiry. I\'m processing your airline report request...',
         timestamp: new Date(),
+        data: reports?.[0], // Use first report as example
       };
-      dispatch(addMessage(botMessage));
-      dispatch(setLoading(false));
-    }, 1500);
 
-    // Add to history
-    if (!currentSession) {
-      const sessionId = Date.now().toString();
-      dispatch(setCurrentSession(sessionId));
-      dispatch(addHistoryItem({
-        id: sessionId,
-        title: inputValue.slice(0, 30) + (inputValue.length > 30 ? '...' : ''),
-        date: new Date(),
-        messageCount: 1,
-      }));
-    }
+      dispatch(addMessage(botMessage));
+      setIsLoading(false);
+
+      // Add to history if it's a new session
+      if (!currentSession) {
+        const sessionId = Date.now().toString();
+        dispatch(setCurrentSession(sessionId));
+        dispatch(addHistoryItem({
+          id: sessionId,
+          title: inputValue.slice(0, 50) + (inputValue.length > 50 ? '...' : ''),
+          date: new Date(),
+          messageCount: 2,
+        }));
+      }
+    }, 1000);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -79,150 +90,154 @@ const AirlineChatbot: React.FC = () => {
     }
   };
 
-  const startNewChat = () => {
-    dispatch(setCurrentSession(null));
-    // Clear messages would be handled by chatSlice
+  const handleHistoryItemClick = (itemId: string) => {
+    dispatch(setCurrentSession(itemId));
+    // In a real app, we would load the messages for this session
+  };
+
+  const handleHistoryTitleEdit = (itemId: string, newTitle: string) => {
+    dispatch(updateHistoryTitle({ id: itemId, title: newTitle }));
+    setEditingHistoryId(null);
+  };
+
+  const renderMessageContent = (message: Message) => {
+    if (message.data && message.type === 'bot') {
+      return (
+        <div className="message-content">
+          <p>{message.content}</p>
+          {message.data.data && (
+            <div className="table-container">
+              <table className="ant-table">
+                <thead className="ant-table-thead">
+                  <tr>
+                    {Object.keys(message.data.data[0] || {}).map((header) => (
+                      <th key={header} className="ant-table-cell">
+                        {header}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="ant-table-tbody">
+                  {message.data.data.map((row: any, index: number) => (
+                    <tr key={index}>
+                      {Object.values(row).map((cell: any, cellIndex) => (
+                        <td key={cellIndex} className="ant-table-cell">
+                          {cell}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    return <div className="message-content">{message.content}</div>;
   };
 
   return (
     <div className="chatbot-container">
       {/* Sidebar */}
-      <AnimatePresence>
-        {sidebarOpen && (
-          <motion.div
-            initial={{ x: -280 }}
-            animate={{ x: 0 }}
-            exit={{ x: -280 }}
-            transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            className="chatbot-sidebar"
-          >
-            <div className="sidebar-header">
-              <Button
-                onClick={startNewChat}
-                className="new-chat-btn"
-              >
-                <Plus size={16} />
-                New Chat
-              </Button>
-            </div>
-
-            <ScrollArea className="sidebar-content">
-              <div className="chat-history">
-                <h3 className="history-title">Recent Conversations</h3>
-                {[1, 2, 3].map((item) => (
-                  <div key={item} className="history-item">
-                    <MessageSquare size={14} />
-                    <span>Flight Analytics Report {item}</span>
-                  </div>
-                ))}
-              </div>
-            </ScrollArea>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Main Chat Area */}
-      <div className={`chat-main ${sidebarOpen ? 'with-sidebar' : 'full-width'}`}>
-        {/* Header */}
-        <div className="chat-header">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="sidebar-toggle"
-          >
-            <Menu size={20} />
-          </Button>
-          <h1 className="chat-title">✈️ Airline Report Assistant</h1>
+      <div className={`sidebar ${!sidebarOpen ? 'collapsed' : ''}`}>
+        <div className="sidebar-header">
+          <h2>Airline Assistant</h2>
+          <ThemeSelector />
         </div>
 
-        {/* Messages Area */}
-        <ScrollArea className="messages-container">
-          <div className="messages-wrapper">
-            <AnimatePresence>
-              {messages.length === 0 ? (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="welcome-screen"
-                >
-                  <div className="welcome-icon">✈️</div>
-                  <h2 className="welcome-title">Welcome to Airline Report Assistant</h2>
-                  <p className="welcome-description">
-                    I can help you analyze flight data, generate reports, and provide insights about airline operations.
-                  </p>
-                  <div className="example-prompts">
-                    <div className="example-prompt">📊 "Show me passenger analytics for this month"</div>
-                    <div className="example-prompt">🛫 "Generate a route performance report"</div>
-                    <div className="example-prompt">📈 "What are the trending flight patterns?"</div>
-                  </div>
-                </motion.div>
+        <div className="history-list">
+          <h3>Recent Conversations</h3>
+          {historyItems.map((item) => (
+            <div
+              key={item.id}
+              className={`history-item ${currentSession === item.id ? 'active' : ''}`}
+              onClick={() => handleHistoryItemClick(item.id)}
+            >
+              {editingHistoryId === item.id ? (
+                <input
+                  className="history-title editing"
+                  defaultValue={item.title}
+                  onBlur={(e) => handleHistoryTitleEdit(item.id, e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      handleHistoryTitleEdit(item.id, e.currentTarget.value);
+                    }
+                  }}
+                  autoFocus
+                />
               ) : (
-                messages.map((message) => (
-                  <motion.div
-                    key={message.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className={`message ${message.role}`}
-                  >
-                    <div className="message-avatar">
-                      {message.role === 'user' ? (
-                        <User size={16} />
-                      ) : (
-                        <Bot size={16} />
-                      )}
-                    </div>
-                    <div className="message-content">
-                      <div className="message-text">{message.content}</div>
-                    </div>
-                  </motion.div>
-                ))
+                <div
+                  className="history-title"
+                  onDoubleClick={() => setEditingHistoryId(item.id)}
+                >
+                  {item.title}
+                </div>
               )}
-            </AnimatePresence>
-            
-            {isLoading && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="message assistant"
-              >
-                <div className="message-avatar">
-                  <Bot size={16} />
-                </div>
-                <div className="message-content">
-                  <div className="typing-indicator">
-                    <div className="typing-dot"></div>
-                    <div className="typing-dot"></div>
-                    <div className="typing-dot"></div>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-            <div ref={messagesEndRef} />
-          </div>
-        </ScrollArea>
+              <div className="history-date">
+                {item.date.toLocaleDateString()}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
 
-        {/* Input Area */}
-        <div className="input-container">
-          <div className="input-wrapper">
+      {/* Chat Area */}
+      <div className="chat-area">
+        <div className="chat-header">
+          <button
+            className="sidebar-toggle"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            aria-label="Toggle sidebar"
+          >
+            ☰
+          </button>
+          <h1 className="header-title">Airline Report Assistant</h1>
+        </div>
+
+        <div className="chat-messages">
+          {messages.map((message) => (
+            <div
+              key={message.id}
+              className={`message ${message.type} message-enter`}
+            >
+              {renderMessageContent(message)}
+            </div>
+          ))}
+          {isLoading && (
+            <div className="message bot">
+              <div className="message-content">
+                <div className="typing-indicator">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+              </div>
+            </div>
+          )}
+          <div ref={messagesEndRef} />
+        </div>
+
+        <div className="chat-input">
+          <div className="input-container">
             <input
-              ref={inputRef}
+              ref={chatInputRef}
               type="text"
-              value={inputValue}
-              onChange={(e) => dispatch(setInputValue(e.target.value))}
-              onKeyPress={handleKeyPress}
-              placeholder="Ask about airline reports, schedules, or analytics..."
               className="message-input"
+              placeholder="Ask about airline reports, schedules, or analytics..."
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyPress={handleKeyPress}
               disabled={isLoading}
             />
-            <Button
+            <button
+              className="send-button"
               onClick={handleSendMessage}
               disabled={!inputValue.trim() || isLoading}
-              className="send-button"
             >
-              <Send size={16} />
-            </Button>
+              {isLoading ? 'Sending...' : 'Send'}
+            </button>
           </div>
         </div>
       </div>

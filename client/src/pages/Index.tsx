@@ -1,4 +1,4 @@
-import AirlineChatbot from '../components/AirlineChatbot';
+import AirlineChatbot from "@/components/AirlineChatbot";
 
 export default function Index() {
   return <AirlineChatbot />;
