@@ -1,0 +1,89 @@
+# 🎨 Theme System Redesign Requirement
+
+## 📌 Context
+
+I’m working on a React project that includes a theme switcher component. The current layout and styling of the theme options are not user-friendly and don’t offer a clean user experience (as shown in the earlier implementation).
+
+I want to **redesign the theme system** to improve usability and visual appeal, taking inspiration from the theme switcher in the attached screenshot (from INFINITI dashboard).
+
+---
+
+## 🎯 Requirements
+
+### 1. **Define Themes with Specific Fonts**
+
+Update the existing themes with clear definitions including font families:
+
+| Theme Name   | Type     | Font Family       |
+|--------------|----------|-------------------|
+| Light Theme  | Light    | `Open Sans`       |
+| Dark Theme   | Black    | `Times New Roman` |
+| Yellow Theme | Colored  | `Arial`           |
+
+Each theme should apply its respective font globally across the app when selected.
+
+---
+
+### 2. **Redesign Theme Selector UI**
+
+Replace the existing theme selector with a more modern, user-friendly interface.
+
+#### Expected UI:
+
+- **Card-style or Panel-style layout** for each theme option
+- Each theme card should include:
+  - A **color preview** or mini mockup
+  - **Theme name** as title
+  - Optional **font description** below
+- Show the selected theme with:
+  - **Border highlight**
+  - **Checkmark icon** or visual indicator
+- Add **hover and focus states** for interactivity
+- Align theme options in a right-side drawer/panel, similar to the design shown in the INFINITI dashboard screenshot
+- Smooth visual transitions when themes are selected
+
+---
+
+### 3. **Responsiveness**
+
+Ensure the theme selection UI works across:
+
+- Desktop (grid or horizontal layout)
+- Tablet (responsive adjustment or stacking)
+- Mobile (stacked vertically or scrollable cards)
+
+---
+
+### 4. **Custom Class Naming Convention**
+
+All custom CSS classes should **strictly follow** the naming convention below:
+
+- Prefix every custom class with `cls-cb-`
+- Example:
+  - `cls-cb-theme-card`
+  - `cls-cb-theme-label`
+  - `cls-cb-theme-container`
+  - `cls-cb-theme-selected`
+
+This ensures proper class scoping and avoids naming conflicts across the application.
+
+---
+
+### 5. **Code-Level Notes**
+
+- Do **not** use Tailwind CSS
+  - Tailwind or related configurations should not appear in `package.json`
+- Styling can be handled using:
+  - `styled-components`
+  - SCSS/CSS Modules
+  - Emotion (`@emotion/react`)
+- Fonts can be imported using standard CSS `@import` or via Google Fonts CDN
+
+---
+
+## 📎 Reference
+
+Refer to the attached screenshot from the **INFINITI dashboard** for the visual styling and layout structure of the theme panel.
+
+---
+
