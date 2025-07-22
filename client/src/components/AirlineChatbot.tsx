@@ -24,7 +24,6 @@ const AirlineChatbot: React.FC = () => {
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [editingHistoryId, setEditingHistoryId] = useState<string | null>(null);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatInputRef = useRef<HTMLInputElement>(null);
@@ -141,7 +140,7 @@ const AirlineChatbot: React.FC = () => {
   return (
     <div className="chatbot-container">
       {/* Sidebar */}
-      <div className={`sidebar ${!sidebarOpen ? 'collapsed' : ''}`}>
+      <div className="sidebar">
         <div className="sidebar-header">
           <h2>Airline Assistant</h2>
         </div>
@@ -186,13 +185,6 @@ const AirlineChatbot: React.FC = () => {
       <div className="chat-area">
         <div className="chat-header">
           <div className="header-left">
-            <button
-              className="sidebar-toggle"
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              aria-label="Toggle sidebar"
-            >
-              ☰
-            </button>
             <h1 className="header-title">Airline Report Assistant</h1>
           </div>
           <div className="header-right">

@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-export interface HistoryItem {
+interface HistoryItem {
   id: string;
   title: string;
   date: Date;
@@ -9,10 +9,12 @@ export interface HistoryItem {
 
 interface HistoryState {
   items: HistoryItem[];
+  currentItemId: string | null;
 }
 
 const initialState: HistoryState = {
   items: [],
+  currentItemId: null,
 };
 
 const historySlice = createSlice({
@@ -28,20 +30,14 @@ const historySlice = createSlice({
         item.title = action.payload.title;
       }
     },
+    setCurrentHistoryItem: (state, action: PayloadAction<string | null>) => {
+      state.currentItemId = action.payload;
+    },
     removeHistoryItem: (state, action: PayloadAction<string>) => {
       state.items = state.items.filter(item => item.id !== action.payload);
-    },
-    clearHistory: (state) => {
-      state.items = [];
     },
   },
 });
 
-export const {
-  addHistoryItem,
-  updateHistoryTitle,
-  removeHistoryItem,
-  clearHistory,
-} = historySlice.actions;
-
+export const { addHistoryItem, updateHistoryTitle, setCurrentHistoryItem, removeHistoryItem } = historySlice.actions;
 export default historySlice.reducer;

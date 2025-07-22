@@ -23,15 +23,15 @@ export const useTheme = () => {
     return () => clearTimeout(timer);
   }, [currentTheme]);
 
-  const changeTheme = (theme: string) => {
+  const setTheme = (theme: string) => {
     // Add transition class before changing theme
     document.documentElement.classList.add('theme-transition');
-    dispatch(setTheme(theme));
+    dispatch({ type: 'theme/setTheme', payload: theme });
   };
 
   return {
     currentTheme,
     availableThemes: themes,
-    changeTheme,
+    setTheme,
   };
 };
