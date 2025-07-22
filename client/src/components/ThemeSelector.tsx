@@ -17,6 +17,10 @@ const ThemeSelector: React.FC = () => {
     dispatch(toggleThemeSelector());
   };
 
+  const handleOverlayClick = () => {
+    dispatch(setThemeSelectorOpen(false));
+  };
+
   return (
     <div className="cls-cb-theme-selector">
       <button
@@ -33,39 +37,44 @@ const ThemeSelector: React.FC = () => {
       </button>
 
       {isThemeSelectorOpen && (
-        <div className="cls-cb-theme-panel">
-          <div className="cls-cb-theme-header">
-            <h3>Choose Theme</h3>
-            <button
-              className="cls-cb-theme-close"
-              onClick={() => dispatch(setThemeSelectorOpen(false))}
-            >
-              ×
-            </button>
-          </div>
-          <div className="cls-cb-theme-options">
-            {Object.entries(themes).map(([key, theme]) => (
-              <div
-                key={key}
-                className={`cls-cb-theme-card ${currentTheme === key ? 'cls-cb-theme-selected' : ''}`}
-                onClick={() => handleThemeSelect(key)}
+        <>
+          <div className="cls-cb-theme-overlay" onClick={handleOverlayClick}></div>
+          <div className="cls-cb-theme-dropdown">
+            <div className="cls-cb-theme-dropdown-header">
+              <h3>Choose Theme</h3>
+              <button
+                className="cls-cb-theme-close"
+                onClick={() => dispatch(setThemeSelectorOpen(false))}
               >
-                <div 
-                  className="cls-cb-theme-preview"
-                  style={{ backgroundColor: theme.colors.primary }}
-                />
-                <div className="cls-cb-theme-info">
-                  <h4 className="cls-cb-theme-name">{theme.name}</h4>
-                  <p className="cls-cb-theme-description">{theme.description}</p>
-                  <span className="cls-cb-theme-type">{theme.type}</span>
-                </div>
-                {currentTheme === key && (
-                  <div className="cls-cb-theme-checkmark">✓</div>
-                )}
-              </div>
-            ))}
+                ×
+              </button>
+            </div>
+            <div className="cls-cb-theme-dropdown-content">
+              {Object.entries(themes).map(([key, theme]) => (
+                <button
+                  key={key}
+                  className={`cls-cb-theme-option ${currentTheme === key ? 'cls-cb-theme-selected' : ''}`}
+                  onClick={() => handleThemeSelect(key)}
+                >
+                  <div 
+                    className="cls-cb-theme-preview"
+                    style={{ backgroundColor: theme.colors.primary }}
+                  >
+                    {currentTheme === key && (
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="white">
+                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                      </svg>
+                    )}
+                  </div>
+                  <div className="cls-cb-theme-info">
+                    <div className="cls-cb-theme-name">{theme.name}</div>
+                    <div className="cls-cb-theme-font">{theme.description}</div>
+                  </div>
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );
