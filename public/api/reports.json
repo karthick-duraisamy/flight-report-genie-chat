@@ -1,0 +1,41 @@
+
+[
+  {
+    "id": "1",
+    "groupId": "GRP001",
+    "groupName": "Corporate Travel Group A",
+    "requestType": "Group Booking",
+    "tripType": "Round Trip",
+    "currency": "USD",
+    "requestedFare": 850,
+    "status": "Confirmed",
+    "sector": "NYC-LAX",
+    "departureDate": "2024-02-15",
+    "returnDate": "2024-02-22"
+  },
+  {
+    "id": "2",
+    "groupId": "GRP002",
+    "groupName": "Conference Attendees B",
+    "requestType": "Group Booking",
+    "tripType": "One Way",
+    "currency": "EUR",
+    "requestedFare": 650,
+    "status": "Pending",
+    "sector": "LHR-FRA",
+    "departureDate": "2024-03-10"
+  },
+  {
+    "id": "3",
+    "groupId": "GRP003",
+    "groupName": "Sports Team C",
+    "requestType": "Charter",
+    "tripType": "Round Trip",
+    "currency": "GBP",
+    "requestedFare": 1200,
+    "status": "Confirmed",
+    "sector": "MAN-BCN",
+    "departureDate": "2024-04-05",
+    "returnDate": "2024-04-12"
+  }
+]

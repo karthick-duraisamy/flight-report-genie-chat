@@ -1,0 +1,24 @@
+
+[
+  {
+    "id": "template1",
+    "name": "Group Booking Report",
+    "description": "Comprehensive report for group bookings with fare analysis",
+    "fields": ["groupId", "groupName", "requestType", "tripType", "currency", "requestedFare", "status"],
+    "category": "Bookings"
+  },
+  {
+    "id": "template2",
+    "name": "Fare Trend Analysis",
+    "description": "Analyze fare trends across different sectors and time periods",
+    "fields": ["sector", "currency", "requestedFare", "departureDate", "status"],
+    "category": "Analytics"
+  },
+  {
+    "id": "template3",
+    "name": "Passenger Manifest",
+    "description": "Detailed passenger information for confirmed bookings",
+    "fields": ["groupId", "groupName", "status", "departureDate", "returnDate"],
+    "category": "Operations"
+  }
+]
