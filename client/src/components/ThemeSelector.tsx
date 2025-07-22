@@ -1,6 +1,6 @@
+
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import { setTheme, toggleThemeSelector, setThemeSelectorOpen, themes } from '@/store/slices/themeSlice';
 
@@ -32,49 +32,41 @@ const ThemeSelector: React.FC = () => {
         </svg>
       </button>
 
-      <AnimatePresence>
-        {isThemeSelectorOpen && (
-          <>
-            <motion.div
-              className="cls-cb-theme-overlay"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+      {isThemeSelectorOpen && (
+        <div className="cls-cb-theme-panel">
+          <div className="cls-cb-theme-header">
+            <h3>Choose Theme</h3>
+            <button
+              className="cls-cb-theme-close"
               onClick={() => dispatch(setThemeSelectorOpen(false))}
-            />
-
-            <motion.div
-              className="cls-cb-theme-dropdown"
-              initial={{ opacity: 0, scale: 0.95, y: -10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: -10 }}
-              transition={{ duration: 0.15, ease: "easeOut" }}
             >
-              <div className="cls-cb-theme-dropdown-content">
-                {Object.entries(themes).map(([key, theme]) => (
-                  <button
-                    key={key}
-                    className={`cls-cb-theme-option ${currentTheme === key ? 'cls-cb-theme-selected' : ''}`}
-                    onClick={() => handleThemeSelect(key)}
-                  >
-                    <div className="cls-cb-theme-preview" style={{ backgroundColor: theme.colors.primary }}>
-                      {currentTheme === key && (
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="white">
-                          <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
-                        </svg>
-                      )}
-                    </div>
-                    <div className="cls-cb-theme-info">
-                      <span className="cls-cb-theme-name">{theme.name}</span>
-                      <span className="cls-cb-theme-font">{theme.fontFamily.split(',')[0]}</span>
-                    </div>
-                  </button>
-                ))}
+              ×
+            </button>
+          </div>
+          <div className="cls-cb-theme-options">
+            {Object.entries(themes).map(([key, theme]) => (
+              <div
+                key={key}
+                className={`cls-cb-theme-card ${currentTheme === key ? 'cls-cb-theme-selected' : ''}`}
+                onClick={() => handleThemeSelect(key)}
+              >
+                <div 
+                  className="cls-cb-theme-preview"
+                  style={{ backgroundColor: theme.colors.primary }}
+                />
+                <div className="cls-cb-theme-info">
+                  <h4 className="cls-cb-theme-name">{theme.name}</h4>
+                  <p className="cls-cb-theme-description">{theme.description}</p>
+                  <span className="cls-cb-theme-type">{theme.type}</span>
+                </div>
+                {currentTheme === key && (
+                  <div className="cls-cb-theme-checkmark">✓</div>
+                )}
               </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
