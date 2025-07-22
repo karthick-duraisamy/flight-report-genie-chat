@@ -3,31 +3,24 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 export interface HistoryItem {
   id: string;
   title: string;
-  timestamp: Date;
-  sessionId: string;
+  date: Date;
+  messageCount: number;
 }
 
 interface HistoryState {
   items: HistoryItem[];
-  isHistoryOpen: boolean;
 }
 
 const initialState: HistoryState = {
   items: [],
-  isHistoryOpen: false,
 };
 
 const historySlice = createSlice({
   name: 'history',
   initialState,
   reducers: {
-    addHistoryItem: (state, action: PayloadAction<Omit<HistoryItem, 'id' | 'timestamp'>>) => {
-      const newItem: HistoryItem = {
-        id: Date.now().toString(),
-        timestamp: new Date(),
-        ...action.payload,
-      };
-      state.items.unshift(newItem);
+    addHistoryItem: (state, action: PayloadAction<HistoryItem>) => {
+      state.items.unshift(action.payload);
     },
     updateHistoryTitle: (state, action: PayloadAction<{ id: string; title: string }>) => {
       const item = state.items.find(item => item.id === action.payload.id);
@@ -41,22 +34,14 @@ const historySlice = createSlice({
     clearHistory: (state) => {
       state.items = [];
     },
-    toggleHistory: (state) => {
-      state.isHistoryOpen = !state.isHistoryOpen;
-    },
-    setHistoryOpen: (state, action: PayloadAction<boolean>) => {
-      state.isHistoryOpen = action.payload;
-    },
   },
 });
 
-export const { 
-  addHistoryItem, 
-  updateHistoryTitle, 
-  removeHistoryItem, 
-  clearHistory, 
-  toggleHistory, 
-  setHistoryOpen 
+export const {
+  addHistoryItem,
+  updateHistoryTitle,
+  removeHistoryItem,
+  clearHistory,
 } = historySlice.actions;
 
 export default historySlice.reducer;
