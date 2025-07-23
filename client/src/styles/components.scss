@@ -324,13 +324,14 @@ body {
       background-color: var(--whatsapp-bot-bubble);
       color: var(--whatsapp-text-primary);
       border-radius: 4px 18px 18px 18px;
-      max-width: 80%; /* 80% width for AI responses */
-      min-width: 60%; /* Increased minimum width for better content display */
-      width: 80%; /* Explicit width for consistent sizing */
+      max-width: 85%; /* Increased for better table display */
+      min-width: 65%; /* Better minimum width for content */
+      width: auto; /* Allow natural width adaptation */
       border: 1px solid var(--whatsapp-border-color);
       order: 2;
       padding: 12px 16px;
       box-shadow: 0 1px 2px var(--whatsapp-shadow);
+      overflow: hidden; /* Prevent content overflow */
     }
   }
 
@@ -574,7 +575,9 @@ body {
   border-radius: 8px;
   overflow: hidden;
   background-color: var(--whatsapp-chat-bg);
+  width: 100%;
   max-width: 100%;
+  box-sizing: border-box;
 
   .table-header {
     display: flex;
@@ -648,46 +651,40 @@ body {
   }
 
   .table-container {
-    max-width: 100%;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+    scrollbar-width: thin;
+    scrollbar-color: var(--whatsapp-text-secondary) transparent;
+    border-radius: 6px;
 
-    &.horizontal-scroll {
-      overflow-x: auto;
-      scrollbar-width: thin;
-      scrollbar-color: var(--whatsapp-text-secondary) transparent;
-      max-width: 100%;
+    &::-webkit-scrollbar {
+      height: 8px;
+    }
 
-      &::-webkit-scrollbar {
-        height: 10px;
-      }
+    &::-webkit-scrollbar-track {
+      background: var(--whatsapp-input-bg);
+      border-radius: 4px;
+    }
 
-      &::-webkit-scrollbar-track {
-        background: var(--whatsapp-input-bg);
-        border-radius: 5px;
-      }
+    &::-webkit-scrollbar-thumb {
+      background: var(--whatsapp-text-secondary);
+      border-radius: 4px;
+      opacity: 0.7;
 
-      &::-webkit-scrollbar-thumb {
-        background: var(--whatsapp-text-secondary);
-        border-radius: 5px;
-        opacity: 0.7;
-
-        &:hover {
-          background: var(--whatsapp-text-primary);
-          opacity: 0.9;
-        }
-      }
-
-      .chat-table {
-        min-width: 100%;
-        width: max-content;
-        min-width: 800px; /* Ensure adequate width for wide tables */
+      &:hover {
+        background: var(--whatsapp-text-primary);
+        opacity: 0.9;
       }
     }
 
     .chat-table {
       width: 100%;
+      min-width: 600px; /* Minimum width to ensure readability */
       border-collapse: collapse;
       font-size: var(--text-sm);
       background-color: var(--whatsapp-chat-bg);
+      table-layout: auto; /* Allow flexible column sizing */
 
       thead {
         background-color: var(--whatsapp-input-bg);
@@ -697,29 +694,39 @@ body {
       }
 
       th, td {
-        padding: 10px 14px;
+        padding: 8px 12px;
         text-align: left;
         border-bottom: 1px solid var(--whatsapp-border-color);
-        white-space: nowrap;
-        min-width: 120px; /* Increased for better content display */
-        max-width: 200px; /* Prevent overly wide columns */
         overflow: hidden;
         text-overflow: ellipsis;
+        word-wrap: break-word;
+        max-width: 150px; /* Flexible max width */
+        min-width: 80px; /* Reasonable minimum */
       }
 
       th {
         font-weight: 600;
         color: var(--whatsapp-text-primary);
         background-color: var(--whatsapp-input-bg);
+        white-space: nowrap;
+        font-size: var(--text-xs);
       }
 
       td {
         color: var(--whatsapp-text-primary);
+        white-space: nowrap;
+        font-size: var(--text-xs);
       }
 
       tr:hover td {
         background-color: var(--whatsapp-input-bg);
       }
+
+      // Specific column width adjustments for better display
+      th:first-child, td:first-child { min-width: 60px; max-width: 80px; }  // Flight
+      th:nth-child(2), td:nth-child(2) { min-width: 80px; max-width: 100px; } // Route
+      th:nth-child(3), td:nth-child(3) { min-width: 70px; max-width: 90px; }  // Status
+      th:nth-child(4), td:nth-child(4) { min-width: 60px; max-width: 80px; }  // Passengers
     }
   }
 }
@@ -858,7 +865,7 @@ body {
         width: 100%;
 
         .table-title {
-          font-size: var(--text-base);
+          font-size: var(--text-sm);
         }
       }
 
@@ -868,7 +875,7 @@ body {
 
         .download-btn {
           padding: 4px 8px;
-          font-size: 11px;
+          font-size: 10px;
 
           svg {
             width: 12px;
@@ -879,18 +886,29 @@ body {
     }
 
     .table-container {
-      &.horizontal-scroll {
-        .chat-table {
-          min-width: 600px; /* Reduced for mobile */
-          font-size: var(--text-xs);
-        }
+      .chat-table {
+        min-width: 500px; /* Reduced for mobile */
+        font-size: 10px;
 
         th, td {
-          padding: 8px 10px;
-          min-width: 80px;
-          max-width: 150px;
+          padding: 6px 8px;
+          min-width: 60px;
+          max-width: 100px;
         }
+
+        th:first-child, td:first-child { min-width: 50px; max-width: 60px; }
+        th:nth-child(2), td:nth-child(2) { min-width: 60px; max-width: 80px; }
+        th:nth-child(3), td:nth-child(3) { min-width: 50px; max-width: 70px; }
+        th:nth-child(4), td:nth-child(4) { min-width: 50px; max-width: 60px; }
       }
+    }
+  }
+
+  .whatsapp-message {
+    &.bot .message-bubble {
+      max-width: 95%; /* Maximum width on mobile for AI responses */
+      min-width: 80%;
+      width: auto;
     }
   }
 }
