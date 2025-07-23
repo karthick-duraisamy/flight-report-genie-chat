@@ -51,8 +51,10 @@ const AirlineChatbot: React.FC = () => {
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages?.length]);
 
   // Focus input on load
   useEffect(() => {
@@ -942,7 +944,7 @@ const AirlineChatbot: React.FC = () => {
               </div>
             </div>
           ) : (
-            messages.map((message) => (
+            messages?.map((message) => (
               <div
                 key={message.id}
                 className={`whatsapp-message ${message.type}`}

@@ -1,11 +1,10 @@
-
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface Message {
   id: string;
   type: 'user' | 'bot';
   content: string;
-  timestamp: Date;
+  timestamp: string; // Changed to string
   isHTML?: boolean;
   tableData?: any[];
   tableColumns?: any[];
@@ -24,8 +23,8 @@ export interface Conversation {
   id: string;
   title: string;
   messages: Message[];
-  createdAt: Date;
-  lastActivity: Date;
+  createdAt: string; // Changed to string
+  lastActivity: string; // Changed to string
 }
 
 interface ChatState {
@@ -49,25 +48,25 @@ const initialState: ChatState = {
         id: '1-1',
         type: 'user',
         content: 'Can you generate a flight delay analysis report for Q4 2023?',
-        timestamp: new Date('2024-01-20T09:15:00'),
+        timestamp: new Date('2024-01-20T09:15:00').toISOString(), // Converted to string
       },
       {
         id: '1-2',
         type: 'bot',
         content: 'I\'ll generate a comprehensive flight delay analysis report for Q4 2023. This will include delay patterns, root causes, and recommendations.',
-        timestamp: new Date('2024-01-20T09:15:30'),
+        timestamp: new Date('2024-01-20T09:15:30').toISOString(), // Converted to string
       },
       {
         id: '1-3',
         type: 'user',
         content: 'Please include weather-related delays separately',
-        timestamp: new Date('2024-01-20T09:16:00'),
+        timestamp: new Date('2024-01-20T09:16:00').toISOString(), // Converted to string
       },
       {
         id: '1-4',
         type: 'bot',
         content: 'Generated comprehensive delay analysis for Q4 2023 with weather-related delays categorized separately. The report shows 15% of delays were weather-related.',
-        timestamp: new Date('2024-01-20T09:16:45'),
+        timestamp: new Date('2024-01-20T09:16:45').toISOString(), // Converted to string
       }
     ],
     '2': [
@@ -75,25 +74,25 @@ const initialState: ChatState = {
         id: '2-1',
         type: 'user',
         content: 'I need a passenger satisfaction survey analysis',
-        timestamp: new Date('2024-01-19T14:30:00'),
+        timestamp: new Date('2024-01-19T14:30:00').toISOString(), // Converted to string
       },
       {
         id: '2-2',
         type: 'bot',
         content: 'I\'ll analyze the passenger satisfaction survey data for you. What specific time period would you like me to focus on?',
-        timestamp: new Date('2024-01-19T14:30:15'),
+        timestamp: new Date('2024-01-19T14:30:15').toISOString(), // Converted to string
       },
       {
         id: '2-3',
         type: 'user',
         content: 'Last 6 months would be perfect',
-        timestamp: new Date('2024-01-19T14:30:45'),
+        timestamp: new Date('2024-01-19T14:30:45').toISOString(), // Converted to string
       },
       {
         id: '2-4',
         type: 'bot',
         content: 'Customer feedback analysis shows 85% satisfaction rate over the last 6 months. Key improvement areas identified in baggage handling and on-time performance.',
-        timestamp: new Date('2024-01-19T14:31:30'),
+        timestamp: new Date('2024-01-19T14:31:30').toISOString(), // Converted to string
       }
     ],
     '3': [
@@ -101,13 +100,13 @@ const initialState: ChatState = {
         id: '3-1',
         type: 'user',
         content: 'Show me route performance metrics',
-        timestamp: new Date('2024-01-18T11:20:00'),
+        timestamp: new Date('2024-01-18T11:20:00').toISOString(), // Converted to string
       },
       {
         id: '3-2',
         type: 'bot',
         content: 'Top performing routes identified for optimization. Routes NYC-LAX and CHI-MIA showing highest profitability and on-time performance.',
-        timestamp: new Date('2024-01-18T11:20:30'),
+        timestamp: new Date('2024-01-18T11:20:30').toISOString(), // Converted to string
       }
     ],
     '4': [
@@ -115,13 +114,13 @@ const initialState: ChatState = {
         id: '4-1',
         type: 'user',
         content: 'Generate aircraft utilization report for our fleet',
-        timestamp: new Date('2024-01-17T10:00:00'),
+        timestamp: new Date('2024-01-17T10:00:00').toISOString(), // Converted to string
       },
       {
         id: '4-2',
         type: 'bot',
         content: 'Fleet efficiency metrics and recommendations generated. Average aircraft utilization is 78% with opportunities for improvement on regional routes.',
-        timestamp: new Date('2024-01-17T10:00:45'),
+        timestamp: new Date('2024-01-17T10:00:45').toISOString(), // Converted to string
       }
     ],
     '5': [
@@ -129,13 +128,13 @@ const initialState: ChatState = {
         id: '5-1',
         type: 'user',
         content: 'I need seasonal demand forecasting for summer 2024',
-        timestamp: new Date('2024-01-16T13:15:00'),
+        timestamp: new Date('2024-01-16T13:15:00').toISOString(), // Converted to string
       },
       {
         id: '5-2',
         type: 'bot',
         content: 'Summer 2024 travel demand predictions and capacity planning completed. Expecting 25% increase in leisure travel bookings.',
-        timestamp: new Date('2024-01-16T13:16:00'),
+        timestamp: new Date('2024-01-16T13:16:00').toISOString(), // Converted to string
       }
     ],
     '6': [
@@ -143,13 +142,13 @@ const initialState: ChatState = {
         id: '6-1',
         type: 'user',
         content: 'Analyze baggage handling performance',
-        timestamp: new Date('2024-01-15T16:30:00'),
+        timestamp: new Date('2024-01-15T16:30:00').toISOString(), // Converted to string
       },
       {
         id: '6-2',
         type: 'bot',
         content: 'Baggage processing time analysis and improvement suggestions provided. Average handling time reduced by 15% with new procedures.',
-        timestamp: new Date('2024-01-15T16:31:00'),
+        timestamp: new Date('2024-01-15T16:31:00').toISOString(), // Converted to string
       }
     ],
     '7': [
@@ -157,13 +156,13 @@ const initialState: ChatState = {
         id: '7-1',
         type: 'user',
         content: 'Optimize crew scheduling for next month',
-        timestamp: new Date('2024-01-14T08:45:00'),
+        timestamp: new Date('2024-01-14T08:45:00').toISOString(), // Converted to string
       },
       {
         id: '7-2',
         type: 'bot',
         content: 'AI-powered crew scheduling reduces operational costs by 12% while ensuring compliance with regulations.',
-        timestamp: new Date('2024-01-14T08:46:00'),
+        timestamp: new Date('2024-01-14T08:46:00').toISOString(), // Converted to string
       }
     ],
     '8': [
@@ -171,13 +170,13 @@ const initialState: ChatState = {
         id: '8-1',
         type: 'user',
         content: 'Show fuel consumption analysis',
-        timestamp: new Date('2024-01-13T12:20:00'),
+        timestamp: new Date('2024-01-13T12:20:00').toISOString(), // Converted to string
       },
       {
         id: '8-2',
         type: 'bot',
         content: 'Fuel efficiency improvements identified across fleet operations. Potential savings of 8% through route optimization.',
-        timestamp: new Date('2024-01-13T12:21:00'),
+        timestamp: new Date('2024-01-13T12:21:00').toISOString(), // Converted to string
       }
     ],
     '9': [
@@ -185,13 +184,13 @@ const initialState: ChatState = {
         id: '9-1',
         type: 'user',
         content: 'Analyze customer loyalty program performance',
-        timestamp: new Date('2024-01-12T15:00:00'),
+        timestamp: new Date('2024-01-12T15:00:00').toISOString(), // Converted to string
       },
       {
         id: '9-2',
         type: 'bot',
         content: 'Premium tier engagement increased by 18% this quarter. Recommendations for enhancing member benefits provided.',
-        timestamp: new Date('2024-01-12T15:01:00'),
+        timestamp: new Date('2024-01-12T15:01:00').toISOString(), // Converted to string
       }
     ],
     '10': [
@@ -199,13 +198,13 @@ const initialState: ChatState = {
         id: '10-1',
         type: 'user',
         content: 'Generate maintenance schedule report',
-        timestamp: new Date('2024-01-11T09:30:00'),
+        timestamp: new Date('2024-01-11T09:30:00').toISOString(), // Converted to string
       },
       {
         id: '10-2',
         type: 'bot',
         content: 'Predictive maintenance reduces unexpected downtime by 30%. Optimized schedule for next quarter prepared.',
-        timestamp: new Date('2024-01-11T09:31:00'),
+        timestamp: new Date('2024-01-11T09:31:00').toISOString(), // Converted to string
       }
     ],
     '11': [
@@ -213,13 +212,13 @@ const initialState: ChatState = {
         id: '11-1',
         type: 'user',
         content: 'Show revenue management dashboard',
-        timestamp: new Date('2024-01-10T14:15:00'),
+        timestamp: new Date('2024-01-10T14:15:00').toISOString(), // Converted to string
       },
       {
         id: '11-2',
         type: 'bot',
         content: 'Dynamic pricing optimization increased revenue by 8%. Market analysis and competitor pricing insights included.',
-        timestamp: new Date('2024-01-10T14:16:00'),
+        timestamp: new Date('2024-01-10T14:16:00').toISOString(), // Converted to string
       }
     ],
     '12': [
@@ -227,13 +226,13 @@ const initialState: ChatState = {
         id: '12-1',
         type: 'user',
         content: 'Airport operations efficiency report needed',
-        timestamp: new Date('2024-01-09T11:00:00'),
+        timestamp: new Date('2024-01-09T11:00:00').toISOString(), // Converted to string
       },
       {
         id: '12-2',
         type: 'bot',
         content: 'Ground handling efficiency metrics and improvement areas identified. Turnaround time reduced by 12 minutes on average.',
-        timestamp: new Date('2024-01-09T11:01:00'),
+        timestamp: new Date('2024-01-09T11:01:00').toISOString(), // Converted to string
       }
     ]
   },
@@ -246,7 +245,13 @@ const chatSlice = createSlice({
   initialState,
   reducers: {
     createConversation: (state, action: PayloadAction<Conversation>) => {
-      state.conversations.unshift(action.payload);
+      // Convert dates to strings when creating a conversation
+      const newConversation = {
+        ...action.payload,
+        createdAt: action.payload.createdAt.toISOString(),
+        lastActivity: action.payload.lastActivity.toISOString(),
+      };
+      state.conversations.unshift(newConversation);
       state.currentConversationId = action.payload.id;
     },
     setCurrentConversation: (state, action: PayloadAction<string>) => {
