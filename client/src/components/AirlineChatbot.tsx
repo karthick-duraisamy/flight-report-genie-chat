@@ -55,16 +55,35 @@ const AirlineChatbot: React.FC = () => {
   const handleSendMessage = async () => {
     if ((!inputValue.trim() && !selectedFile) || isLoading) return;
 
+    let messageContent = inputValue.trim();
+    let attachmentData = undefined;
+
+    if (selectedFile) {
+      // Create file URL for preview
+      const fileUrl = URL.createObjectURL(selectedFile);
+      attachmentData = {
+        fileName: selectedFile.name,
+        fileSize: selectedFile.size,
+        fileType: selectedFile.type,
+        fileUrl: fileUrl,
+        isImage: selectedFile.type.startsWith('image/'),
+        isPdf: selectedFile.type === 'application/pdf'
+      };
+      
+      if (!messageContent) {
+        messageContent = `📎 Shared ${selectedFile.name}`;
+      }
+    }
+
     const userMessage: Message = {
       id: Date.now().toString(),
       type: 'user',
-      content: inputValue.trim() || (selectedFile ? `📎 ${selectedFile.name}` : ''),
+      content: messageContent,
       timestamp: new Date(),
-      data: selectedFile ? { fileName: selectedFile.name, fileSize: selectedFile.size } : undefined,
+      data: attachmentData,
     };
 
     dispatch(addMessage(userMessage));
-    const messageContent = inputValue.trim();
     setInputValue('');
     setSelectedFile(null);
     if (fileInputRef.current) {
@@ -156,34 +175,102 @@ const AirlineChatbot: React.FC = () => {
   };
 
   const renderMessageContent = (message: Message) => {
-    if (message.data && message.type === 'bot') {
+    if (message.data && message.type === 'bot' && message.data.data) {
       return (
         <div className="message-content">
           <p>{message.content}</p>
-          {message.data.data && (
-            <div className="table-container">
-              <table className="chat-table">
-                <thead>
-                  <tr>
-                    {Object.keys(message.data.data[0] || {}).map((header) => (
-                      <th key={header}>
-                        {header}
-                      </th>
+          <div className="table-container">
+            <table className="chat-table">
+              <thead>
+                <tr>
+                  {Object.keys(message.data.data[0] || {}).map((header) => (
+                    <th key={header}>
+                      {header}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {message.data.data.map((row: any, index: number) => (
+                  <tr key={index}>
+                    {Object.values(row).map((cell: any, cellIndex) => (
+                      <td key={cellIndex}>
+                        {cell}
+                      </td>
                     ))}
                   </tr>
-                </thead>
-                <tbody>
-                  {message.data.data.map((row: any, index: number) => (
-                    <tr key={index}>
-                      {Object.values(row).map((cell: any, cellIndex) => (
-                        <td key={cellIndex}>
-                          {cell}
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      );
+    }
+
+    // Handle user messages with file attachments
+    if (message.data && message.type === 'user') {
+      return (
+        <div className="message-content">
+          <p>{message.content}</p>
+          {message.data.isImage && (
+            <div className="attachment-preview">
+              <img 
+                src={message.data.fileUrl} 
+                alt={message.data.fileName}
+                className="attached-image"
+                onClick={() => window.open(message.data.fileUrl, '_blank')}
+              />
+              <div className="file-details">
+                <span className="file-name">{message.data.fileName}</span>
+                <span className="file-size">({(message.data.fileSize / 1024).toFixed(1)} KB)</span>
+              </div>
+            </div>
+          )}
+          {message.data.isPdf && (
+            <div className="attachment-preview">
+              <div className="pdf-preview">
+                <div className="pdf-icon">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+                  </svg>
+                </div>
+                <div className="file-details">
+                  <span className="file-name">{message.data.fileName}</span>
+                  <span className="file-size">({(message.data.fileSize / 1024).toFixed(1)} KB)</span>
+                  <button 
+                    className="view-file-btn"
+                    onClick={() => window.open(message.data.fileUrl, '_blank')}
+                  >
+                    View PDF
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+          {message.data && !message.data.isImage && !message.data.isPdf && (
+            <div className="attachment-preview">
+              <div className="file-preview">
+                <div className="file-icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+                  </svg>
+                </div>
+                <div className="file-details">
+                  <span className="file-name">{message.data.fileName}</span>
+                  <span className="file-size">({(message.data.fileSize / 1024).toFixed(1)} KB)</span>
+                  <button 
+                    className="view-file-btn"
+                    onClick={() => {
+                      const link = document.createElement('a');
+                      link.href = message.data.fileUrl;
+                      link.download = message.data.fileName;
+                      link.click();
+                    }}
+                  >
+                    Download
+                  </button>
+                </div>
+              </div>
             </div>
           )}
         </div>
@@ -324,7 +411,7 @@ const AirlineChatbot: React.FC = () => {
               type="file"
               style={{ display: 'none' }}
               onChange={handleFileSelect}
-              accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.gif"
+              accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.gif,.svg,.webp,.mp4,.mp3,.zip,.rar,.xlsx,.csv"
             />
             <button
               className="attachment-button"

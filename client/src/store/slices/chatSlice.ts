@@ -9,7 +9,15 @@ export interface Message {
   isHTML?: boolean;
   tableData?: any[];
   tableColumns?: any[];
-  data?: any;
+  data?: {
+    fileName?: string;
+    fileSize?: number;
+    fileType?: string;
+    fileUrl?: string;
+    isImage?: boolean;
+    isPdf?: boolean;
+    data?: any; // For bot responses with table data
+  };
 }
 
 export interface Conversation {
