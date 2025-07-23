@@ -7,7 +7,8 @@ import { addHistoryItem, updateHistoryTitle } from '@/store/slices/historySlice'
 import { useGetReportsQuery, useGetTemplatesQuery } from '@/store/api/chatApi';
 import { useTheme } from '@/hooks/useTheme';
 import ThemeSelector from './ThemeSelector';
-import { BarChart, Bar, LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import * as XLSX from 'xlsx';
 
 interface Message {
   id: string;
@@ -206,6 +207,49 @@ const AirlineChatbot: React.FC = () => {
     }
   };
 
+  const downloadTableAsCSV = (tableData: any[], filename: string = 'table-data') => {
+    if (!tableData || tableData.length === 0) return;
+    
+    const headers = Object.keys(tableData[0]);
+    const csvContent = [
+      headers.join(','),
+      ...tableData.map(row => 
+        headers.map(header => {
+          const value = row[header];
+          // Escape quotes and wrap in quotes if contains comma
+          const escapedValue = String(value).replace(/"/g, '""');
+          return escapedValue.includes(',') ? `"${escapedValue}"` : escapedValue;
+        }).join(',')
+      )
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `${filename}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const downloadTableAsExcel = (tableData: any[], filename: string = 'table-data') => {
+    if (!tableData || tableData.length === 0) return;
+    
+    // Create a new workbook
+    const wb = XLSX.utils.book_new();
+    
+    // Convert table data to worksheet
+    const ws = XLSX.utils.json_to_sheet(tableData);
+    
+    // Add the worksheet to the workbook
+    XLSX.utils.book_append_sheet(wb, ws, 'Report Data');
+    
+    // Generate Excel file and trigger download
+    XLSX.writeFile(wb, `${filename}.xlsx`);
+  };
+
   const renderAvatar = (type: 'user' | 'bot') => {
     if (type === 'user') {
       return (
@@ -232,36 +276,101 @@ const AirlineChatbot: React.FC = () => {
     const { type, data, config } = chartData;
     const chartTitle = config?.title || '';
 
+    // Enhanced color palette for better visual distinction
+    const colors = [
+      '#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#00ff00',
+      '#0088fe', '#ff8042', '#ffbb28', '#8dd1e1', '#d084d0'
+    ];
+
     const renderChartComponent = () => {
       switch (type) {
         case 'bar':
           return (
-            <BarChart data={data}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="value" fill="var(--primary-color)" />
+            <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--whatsapp-border-color)" />
+              <XAxis 
+                dataKey="name" 
+                tick={{ fill: 'var(--whatsapp-text-secondary)', fontSize: 12 }}
+                axisLine={{ stroke: 'var(--whatsapp-border-color)' }}
+              />
+              <YAxis 
+                tick={{ fill: 'var(--whatsapp-text-secondary)', fontSize: 12 }}
+                axisLine={{ stroke: 'var(--whatsapp-border-color)' }}
+              />
+              <Tooltip 
+                contentStyle={{
+                  backgroundColor: 'var(--whatsapp-chat-bg)',
+                  border: '1px solid var(--whatsapp-border-color)',
+                  borderRadius: '6px',
+                  color: 'var(--whatsapp-text-primary)'
+                }}
+              />
+              <Legend />
+              <Bar dataKey="value" fill={colors[0]} radius={[4, 4, 0, 0]} />
             </BarChart>
           );
         case 'line':
           return (
-            <LineChart data={data}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Line type="monotone" dataKey="value" stroke="var(--primary-color)" strokeWidth={2} />
+            <LineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--whatsapp-border-color)" />
+              <XAxis 
+                dataKey="name" 
+                tick={{ fill: 'var(--whatsapp-text-secondary)', fontSize: 12 }}
+                axisLine={{ stroke: 'var(--whatsapp-border-color)' }}
+              />
+              <YAxis 
+                tick={{ fill: 'var(--whatsapp-text-secondary)', fontSize: 12 }}
+                axisLine={{ stroke: 'var(--whatsapp-border-color)' }}
+              />
+              <Tooltip 
+                contentStyle={{
+                  backgroundColor: 'var(--whatsapp-chat-bg)',
+                  border: '1px solid var(--whatsapp-border-color)',
+                  borderRadius: '6px',
+                  color: 'var(--whatsapp-text-primary)'
+                }}
+              />
+              <Legend />
+              <Line 
+                type="monotone" 
+                dataKey="value" 
+                stroke={colors[1]} 
+                strokeWidth={3}
+                dot={{ fill: colors[1], strokeWidth: 2, r: 4 }}
+                activeDot={{ r: 6, stroke: colors[1], strokeWidth: 2 }}
+              />
             </LineChart>
           );
         case 'area':
           return (
-            <AreaChart data={data}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Area type="monotone" dataKey="value" stroke="var(--primary-color)" fill="var(--primary-color)" fillOpacity={0.3} />
+            <AreaChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--whatsapp-border-color)" />
+              <XAxis 
+                dataKey="name" 
+                tick={{ fill: 'var(--whatsapp-text-secondary)', fontSize: 12 }}
+                axisLine={{ stroke: 'var(--whatsapp-border-color)' }}
+              />
+              <YAxis 
+                tick={{ fill: 'var(--whatsapp-text-secondary)', fontSize: 12 }}
+                axisLine={{ stroke: 'var(--whatsapp-border-color)' }}
+              />
+              <Tooltip 
+                contentStyle={{
+                  backgroundColor: 'var(--whatsapp-chat-bg)',
+                  border: '1px solid var(--whatsapp-border-color)',
+                  borderRadius: '6px',
+                  color: 'var(--whatsapp-text-primary)'
+                }}
+              />
+              <Legend />
+              <Area 
+                type="monotone" 
+                dataKey="value" 
+                stroke={colors[2]} 
+                fill={colors[2]} 
+                fillOpacity={0.4}
+                strokeWidth={2}
+              />
             </AreaChart>
           );
         default:
@@ -281,7 +390,7 @@ const AirlineChatbot: React.FC = () => {
           </div>
         )}
         <div className="chart-wrapper">
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={400}>
             {renderChartComponent()}
           </ResponsiveContainer>
         </div>
@@ -295,32 +404,63 @@ const AirlineChatbot: React.FC = () => {
     }
 
     const headers = Object.keys(tableData[0] || {});
-    const hasHorizontalScroll = headers.length > 20;
+    const hasHorizontalScroll = headers.length > 8; // More conservative threshold
 
     return (
-      <div className={`table-container ${hasHorizontalScroll ? 'horizontal-scroll' : ''}`}>
-        <table className="chat-table">
-          <thead>
-            <tr>
-              {headers.map((header) => (
-                <th key={header}>
-                  {header}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {tableData.map((row: any, index: number) => (
-              <tr key={index}>
-                {headers.map((header, cellIndex) => (
-                  <td key={cellIndex}>
-                    {row[header]}
-                  </td>
+      <div className="table-wrapper">
+        <div className="table-header">
+          <div className="table-info">
+            <span className="table-stats">
+              {tableData.length} rows × {headers.length} columns
+            </span>
+          </div>
+          <div className="table-actions">
+            <button 
+              className="download-btn csv"
+              onClick={() => downloadTableAsCSV(tableData, 'airline-report')}
+              title="Download as CSV"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+              </svg>
+              CSV
+            </button>
+            <button 
+              className="download-btn excel"
+              onClick={() => downloadTableAsExcel(tableData, 'airline-report')}
+              title="Download as Excel"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+              </svg>
+              Excel
+            </button>
+          </div>
+        </div>
+        <div className={`table-container ${hasHorizontalScroll ? 'horizontal-scroll' : ''}`}>
+          <table className="chat-table">
+            <thead>
+              <tr>
+                {headers.map((header) => (
+                  <th key={header}>
+                    {header}
+                  </th>
                 ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {tableData.map((row: any, index: number) => (
+                <tr key={index}>
+                  {headers.map((header, cellIndex) => (
+                    <td key={cellIndex}>
+                      {row[header]}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     );
   };
