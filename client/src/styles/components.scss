@@ -35,6 +35,8 @@
   --whatsapp-bot-bubble: #202c33;
   --whatsapp-input-bg: #2a3942;
   --whatsapp-header-bg: #202c33;
+  --whatsapp-green: #00a884;
+  --whatsapp-green-hover: #008f72;
   --whatsapp-shadow: rgba(0, 0, 0, 0.3);
 }
 
@@ -106,7 +108,13 @@ body {
     overflow-y: auto;
 
     .section-header {
-      padding: 16px 20px 8px;
+      padding: 16px 20px 12px;
+      background: linear-gradient(135deg, var(--whatsapp-input-bg) 0%, transparent 100%);
+      border-bottom: 1px solid var(--whatsapp-border-color);
+      margin-bottom: 8px;
+      position: sticky;
+      top: 0;
+      z-index: 1;
 
       h3 {
         font-size: var(--text-sm);
@@ -115,11 +123,36 @@ body {
         margin: 0;
         text-transform: uppercase;
         letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        &::before {
+          content: '📋';
+          font-size: 16px;
+        }
+
+        &::after {
+          content: '';
+          flex: 1;
+          height: 1px;
+          background: linear-gradient(90deg, var(--whatsapp-border-color), transparent);
+        }
       }
     }
 
     .history-list {
-      padding: 0 8px;
+      padding: 8px 4px;
+      
+      &:empty::before {
+        content: 'No recent conversations';
+        display: block;
+        text-align: center;
+        color: var(--whatsapp-text-secondary);
+        font-style: italic;
+        padding: 20px;
+        font-size: var(--text-sm);
+      }
     }
   }
 
@@ -127,22 +160,78 @@ body {
     padding: 12px 16px;
     margin-bottom: 1px;
     cursor: pointer;
-    transition: background-color 0.15s ease;
+    transition: all 0.2s ease;
     border-radius: 8px;
     margin: 0 8px 2px;
+    position: relative;
+    border: 1px solid transparent;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid var(--whatsapp-border-color);
+      margin-bottom: 8px;
+      padding-bottom: 16px;
+    }
+
+    &:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 16px;
+      right: 16px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, var(--whatsapp-border-color) 20%, var(--whatsapp-border-color) 80%, transparent 100%);
+    }
 
     &:hover {
       background-color: var(--whatsapp-input-bg);
+      transform: translateX(2px);
+      box-shadow: 0 2px 4px var(--whatsapp-shadow);
     }
 
     &.active {
-      background-color: var(--whatsapp-input-bg);
+      background: linear-gradient(135deg, var(--whatsapp-green), var(--whatsapp-green-hover));
+      color: white;
+      border-color: var(--whatsapp-green);
+      box-shadow: 0 4px 12px rgba(26, 115, 232, 0.25);
+      transform: translateX(4px);
+
+      .history-title {
+        color: white !important;
+        font-weight: 600;
+      }
+
+      .history-preview {
+        color: rgba(255, 255, 255, 0.9) !important;
+      }
+
+      .history-date {
+        color: rgba(255, 255, 255, 0.8) !important;
+      }
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: -8px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 60%;
+        background: white;
+        border-radius: 2px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      &:hover {
+        transform: translateX(4px);
+        background: linear-gradient(135deg, var(--whatsapp-green-hover), var(--whatsapp-green));
+      }
     }
 
     .history-content {
       display: flex;
       flex-direction: column;
       gap: 4px;
+      transition: all 0.2s ease;
     }
 
     .history-title {
