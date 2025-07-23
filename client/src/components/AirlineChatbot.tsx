@@ -26,6 +26,7 @@ const AirlineChatbot: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [editingHistoryId, setEditingHistoryId] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatInputRef = useRef<HTMLInputElement>(null);
@@ -42,6 +43,20 @@ const AirlineChatbot: React.FC = () => {
   // Focus input on load
   useEffect(() => {
     chatInputRef.current?.focus();
+  }, []);
+
+  // Network status monitoring
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
   }, []);
 
   const formatTime = (date: Date) => {
@@ -207,7 +222,7 @@ const AirlineChatbot: React.FC = () => {
       );
     }
 
-    // Handle user messages with file attachments
+    // Handle user messages with file attachments (no download option)
     if (message.data && message.type === 'user') {
       return (
         <div className="message-content">
@@ -237,11 +252,80 @@ const AirlineChatbot: React.FC = () => {
                 <div className="file-details">
                   <span className="file-name">{message.data.fileName}</span>
                   <span className="file-size">({(message.data.fileSize / 1024).toFixed(1)} KB)</span>
+                </div>
+              </div>
+            </div>
+          )}
+          {message.data && !message.data.isImage && !message.data.isPdf && (
+            <div className="attachment-preview">
+              <div className="file-preview">
+                <div className="file-icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+                  </svg>
+                </div>
+                <div className="file-details">
+                  <span className="file-name">{message.data.fileName}</span>
+                  <span className="file-size">({(message.data.fileSize / 1024).toFixed(1)} KB)</span>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // Handle bot messages with file attachments (with download option)
+    if (message.data && message.type === 'bot') {
+      return (
+        <div className="message-content">
+          <p>{message.content}</p>
+          {message.data.isImage && (
+            <div className="attachment-preview">
+              <img 
+                src={message.data.fileUrl} 
+                alt={message.data.fileName}
+                className="attached-image"
+                onClick={() => window.open(message.data.fileUrl, '_blank')}
+              />
+              <div className="file-details">
+                <span className="file-name">{message.data.fileName}</span>
+                <span className="file-size">({(message.data.fileSize / 1024).toFixed(1)} KB)</span>
+                <button 
+                  className="download-file-btn"
+                  onClick={() => {
+                    const link = document.createElement('a');
+                    link.href = message.data.fileUrl;
+                    link.download = message.data.fileName;
+                    link.click();
+                  }}
+                >
+                  Download
+                </button>
+              </div>
+            </div>
+          )}
+          {message.data.isPdf && (
+            <div className="attachment-preview">
+              <div className="pdf-preview">
+                <div className="pdf-icon">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+                  </svg>
+                </div>
+                <div className="file-details">
+                  <span className="file-name">{message.data.fileName}</span>
+                  <span className="file-size">({(message.data.fileSize / 1024).toFixed(1)} KB)</span>
                   <button 
-                    className="view-file-btn"
-                    onClick={() => window.open(message.data.fileUrl, '_blank')}
+                    className="download-file-btn"
+                    onClick={() => {
+                      const link = document.createElement('a');
+                      link.href = message.data.fileUrl;
+                      link.download = message.data.fileName;
+                      link.click();
+                    }}
                   >
-                    View PDF
+                    Download PDF
                   </button>
                 </div>
               </div>
@@ -259,7 +343,7 @@ const AirlineChatbot: React.FC = () => {
                   <span className="file-name">{message.data.fileName}</span>
                   <span className="file-size">({(message.data.fileSize / 1024).toFixed(1)} KB)</span>
                   <button 
-                    className="view-file-btn"
+                    className="download-file-btn"
                     onClick={() => {
                       const link = document.createElement('a');
                       link.href = message.data.fileUrl;
@@ -339,7 +423,9 @@ const AirlineChatbot: React.FC = () => {
           <div className="header-left">
             <div className="contact-info">
               <h1 className="contact-name">Airline Report Assistant</h1>
-              <span className="status">Online</span>
+              <span className={`status ${isOnline ? 'online' : 'offline'}`}>
+                {isOnline ? 'Online' : 'Offline'}
+              </span>
             </div>
           </div>
           <div className="header-right">
