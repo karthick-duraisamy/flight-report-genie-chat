@@ -71,7 +71,7 @@
     "react-redux": "^9.2.0",
     "react-resizable-panels": "^2.1.7",
     "react-router-dom": "^7.7.0",
-    "recharts": "^2.15.2",
+    "recharts": "^2.15.4",
     "sass": "^1.89.2",
     "sonner": "^2.0.6",
     "tw-animate-css": "^1.2.5",

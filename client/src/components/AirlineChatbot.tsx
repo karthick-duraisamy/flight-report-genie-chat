@@ -7,6 +7,7 @@ import { addHistoryItem, updateHistoryTitle } from '@/store/slices/historySlice'
 import { useGetReportsQuery, useGetTemplatesQuery } from '@/store/api/chatApi';
 import { useTheme } from '@/hooks/useTheme';
 import ThemeSelector from './ThemeSelector';
+import { BarChart, Bar, LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface Message {
   id: string;
@@ -108,12 +109,48 @@ const AirlineChatbot: React.FC = () => {
 
     // Simulate bot response with animation delay
     setTimeout(() => {
+      // Simulate different types of AI responses
+      let botContent = '';
+      
+      if (messageContent.toLowerCase().includes('table') || messageContent.toLowerCase().includes('report')) {
+        // Table response
+        botContent = JSON.stringify({
+          type: 'table',
+          content: '<p>Here is the airline performance report:</p>',
+          data: reports?.[0]?.data || [
+            { "Flight": "AA101", "Route": "NYC-LAX", "Status": "On Time", "Passengers": 150 },
+            { "Flight": "AA102", "Route": "LAX-NYC", "Status": "Delayed", "Passengers": 145 },
+            { "Flight": "AA103", "Route": "NYC-MIA", "Status": "On Time", "Passengers": 160 }
+          ]
+        });
+      } else if (messageContent.toLowerCase().includes('chart') || messageContent.toLowerCase().includes('graph')) {
+        // Chart response
+        botContent = JSON.stringify({
+          type: 'chart',
+          content: '<p>Flight performance chart:</p>',
+          data: {
+            type: 'bar',
+            data: [
+              { name: 'On Time', value: 85 },
+              { name: 'Delayed', value: 12 },
+              { name: 'Cancelled', value: 3 }
+            ],
+            config: { title: 'Flight Performance' }
+          }
+        });
+      } else {
+        // HTML text response
+        botContent = JSON.stringify({
+          type: 'html',
+          content: '<p>Thank you for your inquiry. I\'m processing your airline report request...</p><p><strong>Key Information:</strong></p><ul><li>✈️ Flight data available</li><li>📊 Analytics ready</li><li>📈 Reports generated</li></ul>'
+        });
+      }
+
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: 'bot',
-        content: 'Thank you for your inquiry. I\'m processing your airline report request...',
+        content: botContent,
         timestamp: new Date(),
-        data: reports?.[0], // Use first report as example
       };
 
       dispatch(addMessage(botMessage));
@@ -189,35 +226,178 @@ const AirlineChatbot: React.FC = () => {
     }
   };
 
+  const renderChart = (chartData: any) => {
+    if (!chartData || !chartData.type || !chartData.data) return null;
+
+    const { type, data, config } = chartData;
+    const chartTitle = config?.title || '';
+
+    const renderChartComponent = () => {
+      switch (type) {
+        case 'bar':
+          return (
+            <BarChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey="value" fill="var(--primary-color)" />
+            </BarChart>
+          );
+        case 'line':
+          return (
+            <LineChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Line type="monotone" dataKey="value" stroke="var(--primary-color)" strokeWidth={2} />
+            </LineChart>
+          );
+        case 'area':
+          return (
+            <AreaChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Area type="monotone" dataKey="value" stroke="var(--primary-color)" fill="var(--primary-color)" fillOpacity={0.3} />
+            </AreaChart>
+          );
+        default:
+          return (
+            <div className="chart-placeholder">
+              <p>Unsupported chart type: {type}</p>
+            </div>
+          );
+      }
+    };
+
+    return (
+      <div className="chart-container">
+        {chartTitle && (
+          <div className="chart-title">
+            <h4>{chartTitle}</h4>
+          </div>
+        )}
+        <div className="chart-wrapper">
+          <ResponsiveContainer width="100%" height={300}>
+            {renderChartComponent()}
+          </ResponsiveContainer>
+        </div>
+      </div>
+    );
+  };
+
+  const renderTable = (tableData: any) => {
+    if (!tableData || !Array.isArray(tableData) || tableData.length === 0) {
+      return <p>No table data available</p>;
+    }
+
+    const headers = Object.keys(tableData[0] || {});
+    const hasHorizontalScroll = headers.length > 20;
+
+    return (
+      <div className={`table-container ${hasHorizontalScroll ? 'horizontal-scroll' : ''}`}>
+        <table className="chat-table">
+          <thead>
+            <tr>
+              {headers.map((header) => (
+                <th key={header}>
+                  {header}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {tableData.map((row: any, index: number) => (
+              <tr key={index}>
+                {headers.map((header, cellIndex) => (
+                  <td key={cellIndex}>
+                    {row[header]}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
+
+  const parseAIResponse = (content: string) => {
+    try {
+      const parsed = JSON.parse(content);
+      return parsed;
+    } catch (error) {
+      // If not valid JSON, treat as plain text
+      return { type: 'text', content };
+    }
+  };
+
   const renderMessageContent = (message: Message) => {
+    // Handle AI responses with JSON format
+    if (message.type === 'bot' && message.content) {
+      const aiResponse = parseAIResponse(message.content);
+      
+      if (aiResponse.type) {
+        switch (aiResponse.type) {
+          case 'text':
+          case 'html':
+            return (
+              <div className="message-content">
+                <div 
+                  className="ai-html-content"
+                  dangerouslySetInnerHTML={{ __html: aiResponse.content }}
+                />
+              </div>
+            );
+          
+          case 'table':
+            return (
+              <div className="message-content">
+                {aiResponse.content && (
+                  <div 
+                    className="ai-html-content"
+                    dangerouslySetInnerHTML={{ __html: aiResponse.content }}
+                  />
+                )}
+                {aiResponse.data && renderTable(aiResponse.data)}
+              </div>
+            );
+          
+          case 'chart':
+            return (
+              <div className="message-content">
+                {aiResponse.content && (
+                  <div 
+                    className="ai-html-content"
+                    dangerouslySetInnerHTML={{ __html: aiResponse.content }}
+                  />
+                )}
+                {aiResponse.data && renderChart(aiResponse.data)}
+              </div>
+            );
+          
+          default:
+            return (
+              <div className="message-content">
+                <div 
+                  className="ai-html-content"
+                  dangerouslySetInnerHTML={{ __html: aiResponse.content }}
+                />
+              </div>
+            );
+        }
+      }
+    }
+
+    // Handle legacy table data format
     if (message.data && message.type === 'bot' && message.data.data) {
       return (
         <div className="message-content">
           <p>{message.content}</p>
-          <div className="table-container">
-            <table className="chat-table">
-              <thead>
-                <tr>
-                  {Object.keys(message.data.data[0] || {}).map((header) => (
-                    <th key={header}>
-                      {header}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {message.data.data.map((row: any, index: number) => (
-                  <tr key={index}>
-                    {Object.values(row).map((cell: any, cellIndex) => (
-                      <td key={cellIndex}>
-                        {cell}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          {renderTable(message.data.data)}
         </div>
       );
     }
