@@ -1,18 +1,37 @@
-
-import React, { useState, useRef, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '@/store';
-import { addMessage, setCurrentSession, loadConversationMessages } from '@/store/slices/chatSlice';
-import { addHistoryItem, updateHistoryTitle } from '@/store/slices/historySlice';
-import { useGetReportsQuery, useGetTemplatesQuery } from '@/store/api/chatApi';
-import { useTheme } from '@/hooks/useTheme';
-import ThemeSelector from './ThemeSelector';
-import { BarChart, Bar, LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import * as XLSX from 'xlsx';
+import React, { useState, useRef, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "@/store";
+import {
+  addMessage,
+  setCurrentSession,
+  loadConversationMessages,
+} from "@/store/slices/chatSlice";
+import {
+  addHistoryItem,
+  updateHistoryTitle,
+} from "@/store/slices/historySlice";
+import { useGetReportsQuery, useGetTemplatesQuery } from "@/store/api/chatApi";
+import { useTheme } from "@/hooks/useTheme";
+import ThemeSelector from "./ThemeSelector";
+import {
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from "recharts";
+import * as XLSX from "xlsx";
 
 interface Message {
   id: string;
-  type: 'user' | 'bot';
+  type: "user" | "bot";
   content: string;
   timestamp: Date;
   data?: any;
@@ -21,10 +40,14 @@ interface Message {
 const AirlineChatbot: React.FC = () => {
   const dispatch = useDispatch();
   const { currentTheme } = useTheme();
-  const { currentSession, messages } = useSelector((state: RootState) => state.chat);
-  const { items: historyItems, isExpanded } = useSelector((state: RootState) => state.history);
+  const { currentSession, messages } = useSelector(
+    (state: RootState) => state.chat,
+  );
+  const { items: historyItems, isExpanded } = useSelector(
+    (state: RootState) => state.history,
+  );
 
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [editingHistoryId, setEditingHistoryId] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -39,7 +62,7 @@ const AirlineChatbot: React.FC = () => {
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   // Focus input on load
@@ -52,20 +75,20 @@ const AirlineChatbot: React.FC = () => {
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
 
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
 
     return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
     };
   }, []);
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false
+    return date.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
     });
   };
 
@@ -83,10 +106,10 @@ const AirlineChatbot: React.FC = () => {
         fileSize: selectedFile.size,
         fileType: selectedFile.type,
         fileUrl: fileUrl,
-        isImage: selectedFile.type.startsWith('image/'),
-        isPdf: selectedFile.type === 'application/pdf'
+        isImage: selectedFile.type.startsWith("image/"),
+        isPdf: selectedFile.type === "application/pdf",
       };
-      
+
       if (!messageContent) {
         messageContent = `📎 Shared ${selectedFile.name}`;
       }
@@ -94,67 +117,167 @@ const AirlineChatbot: React.FC = () => {
 
     const userMessage: Message = {
       id: Date.now().toString(),
-      type: 'user',
+      type: "user",
       content: messageContent,
       timestamp: new Date(),
       data: attachmentData,
     };
 
     dispatch(addMessage(userMessage));
-    setInputValue('');
+    setInputValue("");
     setSelectedFile(null);
     if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+      fileInputRef.current.value = "";
     }
     setIsLoading(true);
 
     // Simulate bot response with animation delay
     setTimeout(() => {
       // Simulate different types of AI responses
-      let botContent = '';
-      
-      if (messageContent.toLowerCase().includes('table') || messageContent.toLowerCase().includes('report')) {
+      let botContent = "";
+
+      if (
+        messageContent.toLowerCase().includes("table") ||
+        messageContent.toLowerCase().includes("report")
+      ) {
         // Table response
-        botContent = JSON.stringify({
-          type: 'table',
-          title: 'Airline Performance Report',
-          content: '<p>Here is the airline performance report:</p>',
-          data: reports?.[0]?.data || [
-            { "Flight": "AA101", "Route": "NYC-LAX", "Status": "On Time", "Passengers": 150 },
-            { "Flight": "AA102", "Route": "LAX-NYC", "Status": "Delayed", "Passengers": 145 },
-            { "Flight": "AA103", "Route": "NYC-MIA", "Status": "On Time", "Passengers": 160 }
-          ]
+        const botContent = JSON.stringify({
+          type: "table",
+          title: "Airline Performance Report - Extended",
+          content: "<p>Here is the airline performance report:</p>",
+          data: [
+            {
+              Flight: "AA101",
+              Route: "NYC-LAX",
+              Status: "On Time",
+              Passengers: 150,
+              Aircraft: "Boeing 737",
+              "Crew Count": 5,
+              "Flight Duration": "5h 30m",
+              "Departure Time": "08:00",
+              "Arrival Time": "13:30",
+              Gate: "G12",
+              Terminal: "T3",
+              "Delay Reason": "",
+              Weather: "Clear",
+              "Fuel Used": "5000L",
+              Distance: "3980km",
+              Altitude: "35000ft",
+              Speed: "850km/h",
+              "Cargo Weight": "2000kg",
+              "Baggage Count": 120,
+              "Check-in Time": "06:30",
+              "Boarding Time": "07:45",
+              "Taxi Time": "15m",
+              "Maintenance Status": "OK",
+              "Meal Served": "Yes",
+              "Wi-Fi Available": "Yes",
+              Entertainment: "Yes",
+              "Class Type": "Economy",
+              "Occupancy Rate": "95%",
+              "Ticket Price": "$250",
+              Revenue: "$37500",
+            },
+            {
+              Flight: "AA102",
+              Route: "LAX-NYC",
+              Status: "Delayed",
+              Passengers: 145,
+              Aircraft: "Airbus A320",
+              "Crew Count": 6,
+              "Flight Duration": "6h 00m",
+              "Departure Time": "10:00",
+              "Arrival Time": "16:00",
+              Gate: "B7",
+              Terminal: "T4",
+              "Delay Reason": "Weather",
+              Weather: "Stormy",
+              "Fuel Used": "5200L",
+              Distance: "3980km",
+              Altitude: "36000ft",
+              Speed: "820km/h",
+              "Cargo Weight": "2100kg",
+              "Baggage Count": 130,
+              "Check-in Time": "08:00",
+              "Boarding Time": "09:40",
+              "Taxi Time": "20m",
+              "Maintenance Status": "Minor Delay",
+              "Meal Served": "Yes",
+              "Wi-Fi Available": "Yes",
+              Entertainment: "Yes",
+              "Class Type": "Business",
+              "Occupancy Rate": "85%",
+              "Ticket Price": "$400",
+              Revenue: "$58000",
+            },
+            {
+              Flight: "AA103",
+              Route: "NYC-MIA",
+              Status: "On Time",
+              Passengers: 160,
+              Aircraft: "Boeing 757",
+              "Crew Count": 5,
+              "Flight Duration": "3h 10m",
+              "Departure Time": "14:00",
+              "Arrival Time": "17:10",
+              Gate: "F5",
+              Terminal: "T2",
+              "Delay Reason": "",
+              Weather: "Sunny",
+              "Fuel Used": "4000L",
+              Distance: "2140km",
+              Altitude: "34000ft",
+              Speed: "870km/h",
+              "Cargo Weight": "1500kg",
+              "Baggage Count": 110,
+              "Check-in Time": "12:30",
+              "Boarding Time": "13:45",
+              "Taxi Time": "10m",
+              "Maintenance Status": "OK",
+              "Meal Served": "Yes",
+              "Wi-Fi Available": "No",
+              Entertainment: "Yes",
+              "Class Type": "First",
+              "Occupancy Rate": "98%",
+              "Ticket Price": "$600",
+              Revenue: "$96000",
+            },
+          ],
         });
-      } else if (messageContent.toLowerCase().includes('chart') || messageContent.toLowerCase().includes('graph')) {
+      } else if (
+        messageContent.toLowerCase().includes("chart") ||
+        messageContent.toLowerCase().includes("graph")
+      ) {
         // Chart response
         botContent = JSON.stringify({
-          type: 'chart',
-          content: '<p>Flight performance chart:</p>',
+          type: "chart",
+          content: "<p>Flight performance chart:</p>",
           data: {
-            type: 'bar',
+            type: "bar",
             data: [
-              { name: 'On Time', value: 85, fill: '#10b981' },
-              { name: 'Delayed', value: 12, fill: '#f59e0b' },
-              { name: 'Cancelled', value: 3, fill: '#ef4444' }
+              { name: "On Time", value: 85, fill: "#10b981" },
+              { name: "Delayed", value: 12, fill: "#f59e0b" },
+              { name: "Cancelled", value: 3, fill: "#ef4444" },
             ],
-            config: { 
-              title: 'Flight Performance Analysis',
+            config: {
+              title: "Flight Performance Analysis",
               showTooltip: true,
-              showLegend: true
-            }
-          }
+              showLegend: true,
+            },
+          },
         });
       } else {
         // HTML text response
         botContent = JSON.stringify({
-          type: 'html',
-          content: '<p>Thank you for your inquiry. I\'m processing your airline report request...</p><p><strong>Key Information:</strong></p><ul><li>✈️ Flight data available</li><li>📊 Analytics ready</li><li>📈 Reports generated</li></ul>'
+          type: "html",
+          content:
+            "<p>Thank you for your inquiry. I'm processing your airline report request...</p><p><strong>Key Information:</strong></p><ul><li>✈️ Flight data available</li><li>📊 Analytics ready</li><li>📈 Reports generated</li></ul>",
         });
       }
 
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
-        type: 'bot',
+        type: "bot",
         content: botContent,
         timestamp: new Date(),
       };
@@ -166,19 +289,23 @@ const AirlineChatbot: React.FC = () => {
       if (!currentSession) {
         const sessionId = Date.now().toString();
         dispatch(setCurrentSession(sessionId));
-        dispatch(addHistoryItem({
-          id: sessionId,
-          title: messageContent.slice(0, 50) + (messageContent.length > 50 ? '...' : ''),
-          date: new Date(),
-          messageCount: 2,
-          lastMessage: botMessage.content.slice(0, 100) + '...'
-        }));
+        dispatch(
+          addHistoryItem({
+            id: sessionId,
+            title:
+              messageContent.slice(0, 50) +
+              (messageContent.length > 50 ? "..." : ""),
+            date: new Date(),
+            messageCount: 2,
+            lastMessage: botMessage.content.slice(0, 100) + "...",
+          }),
+        );
       }
     }, 1000);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
     }
@@ -208,55 +335,65 @@ const AirlineChatbot: React.FC = () => {
   const removeSelectedFile = () => {
     setSelectedFile(null);
     if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+      fileInputRef.current.value = "";
     }
   };
 
-  const downloadTableAsCSV = (tableData: any[], filename: string = 'table-data') => {
+  const downloadTableAsCSV = (
+    tableData: any[],
+    filename: string = "table-data",
+  ) => {
     if (!tableData || tableData.length === 0) return;
-    
+
     const headers = Object.keys(tableData[0]);
     const csvContent = [
-      headers.join(','),
-      ...tableData.map(row => 
-        headers.map(header => {
-          const value = row[header];
-          // Escape quotes and wrap in quotes if contains comma
-          const escapedValue = String(value).replace(/"/g, '""');
-          return escapedValue.includes(',') ? `"${escapedValue}"` : escapedValue;
-        }).join(',')
-      )
-    ].join('\n');
+      headers.join(","),
+      ...tableData.map((row) =>
+        headers
+          .map((header) => {
+            const value = row[header];
+            // Escape quotes and wrap in quotes if contains comma
+            const escapedValue = String(value).replace(/"/g, '""');
+            return escapedValue.includes(",")
+              ? `"${escapedValue}"`
+              : escapedValue;
+          })
+          .join(","),
+      ),
+    ].join("\n");
 
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', `${filename}.csv`);
-    link.style.visibility = 'hidden';
+    link.setAttribute("href", url);
+    link.setAttribute("download", `${filename}.csv`);
+    link.style.visibility = "hidden";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
-  const downloadTableAsExcel = (tableData: any[], filename: string = 'table-data') => {
+  const downloadTableAsExcel = (
+    tableData: any[],
+    filename: string = "table-data",
+  ) => {
     if (!tableData || tableData.length === 0) return;
-    
+
     // Create a new workbook
     const wb = XLSX.utils.book_new();
-    
+
     // Convert table data to worksheet
     const ws = XLSX.utils.json_to_sheet(tableData);
-    
+
     // Add the worksheet to the workbook
-    XLSX.utils.book_append_sheet(wb, ws, 'Report Data');
-    
+    XLSX.utils.book_append_sheet(wb, ws, "Report Data");
+
     // Generate Excel file and trigger download
     XLSX.writeFile(wb, `${filename}.xlsx`);
   };
 
-  const renderAvatar = (type: 'user' | 'bot') => {
-    if (type === 'user') {
+  const renderAvatar = (type: "user" | "bot") => {
+    if (type === "user") {
       return (
         <div className="message-avatar user-avatar">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
@@ -279,100 +416,126 @@ const AirlineChatbot: React.FC = () => {
     if (!chartData || !chartData.type || !chartData.data) return null;
 
     const { type, data, config } = chartData;
-    const chartTitle = config?.title || '';
+    const chartTitle = config?.title || "";
 
     // Enhanced color palette for better visual distinction
     const colors = [
-      '#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#00ff00',
-      '#0088fe', '#ff8042', '#ffbb28', '#8dd1e1', '#d084d0'
+      "#8884d8",
+      "#82ca9d",
+      "#ffc658",
+      "#ff7300",
+      "#00ff00",
+      "#0088fe",
+      "#ff8042",
+      "#ffbb28",
+      "#8dd1e1",
+      "#d084d0",
     ];
 
     const renderChartComponent = () => {
       switch (type) {
-        case 'bar':
+        case "bar":
           return (
-            <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--whatsapp-border-color)" />
-              <XAxis 
-                dataKey="name" 
-                tick={{ fill: 'var(--whatsapp-text-secondary)', fontSize: 12 }}
-                axisLine={{ stroke: 'var(--whatsapp-border-color)' }}
+            <BarChart
+              data={data}
+              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            >
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke="var(--whatsapp-border-color)"
               />
-              <YAxis 
-                tick={{ fill: 'var(--whatsapp-text-secondary)', fontSize: 12 }}
-                axisLine={{ stroke: 'var(--whatsapp-border-color)' }}
+              <XAxis
+                dataKey="name"
+                tick={{ fill: "var(--whatsapp-text-secondary)", fontSize: 12 }}
+                axisLine={{ stroke: "var(--whatsapp-border-color)" }}
               />
-              <Tooltip 
+              <YAxis
+                tick={{ fill: "var(--whatsapp-text-secondary)", fontSize: 12 }}
+                axisLine={{ stroke: "var(--whatsapp-border-color)" }}
+              />
+              <Tooltip
                 contentStyle={{
-                  backgroundColor: 'var(--whatsapp-chat-bg)',
-                  border: '1px solid var(--whatsapp-border-color)',
-                  borderRadius: '6px',
-                  color: 'var(--whatsapp-text-primary)'
+                  backgroundColor: "var(--whatsapp-chat-bg)",
+                  border: "1px solid var(--whatsapp-border-color)",
+                  borderRadius: "6px",
+                  color: "var(--whatsapp-text-primary)",
                 }}
               />
               <Legend />
               <Bar dataKey="value" fill={colors[0]} radius={[4, 4, 0, 0]} />
             </BarChart>
           );
-        case 'line':
+        case "line":
           return (
-            <LineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--whatsapp-border-color)" />
-              <XAxis 
-                dataKey="name" 
-                tick={{ fill: 'var(--whatsapp-text-secondary)', fontSize: 12 }}
-                axisLine={{ stroke: 'var(--whatsapp-border-color)' }}
+            <LineChart
+              data={data}
+              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            >
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke="var(--whatsapp-border-color)"
               />
-              <YAxis 
-                tick={{ fill: 'var(--whatsapp-text-secondary)', fontSize: 12 }}
-                axisLine={{ stroke: 'var(--whatsapp-border-color)' }}
+              <XAxis
+                dataKey="name"
+                tick={{ fill: "var(--whatsapp-text-secondary)", fontSize: 12 }}
+                axisLine={{ stroke: "var(--whatsapp-border-color)" }}
               />
-              <Tooltip 
+              <YAxis
+                tick={{ fill: "var(--whatsapp-text-secondary)", fontSize: 12 }}
+                axisLine={{ stroke: "var(--whatsapp-border-color)" }}
+              />
+              <Tooltip
                 contentStyle={{
-                  backgroundColor: 'var(--whatsapp-chat-bg)',
-                  border: '1px solid var(--whatsapp-border-color)',
-                  borderRadius: '6px',
-                  color: 'var(--whatsapp-text-primary)'
+                  backgroundColor: "var(--whatsapp-chat-bg)",
+                  border: "1px solid var(--whatsapp-border-color)",
+                  borderRadius: "6px",
+                  color: "var(--whatsapp-text-primary)",
                 }}
               />
               <Legend />
-              <Line 
-                type="monotone" 
-                dataKey="value" 
-                stroke={colors[1]} 
+              <Line
+                type="monotone"
+                dataKey="value"
+                stroke={colors[1]}
                 strokeWidth={3}
                 dot={{ fill: colors[1], strokeWidth: 2, r: 4 }}
                 activeDot={{ r: 6, stroke: colors[1], strokeWidth: 2 }}
               />
             </LineChart>
           );
-        case 'area':
+        case "area":
           return (
-            <AreaChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--whatsapp-border-color)" />
-              <XAxis 
-                dataKey="name" 
-                tick={{ fill: 'var(--whatsapp-text-secondary)', fontSize: 12 }}
-                axisLine={{ stroke: 'var(--whatsapp-border-color)' }}
+            <AreaChart
+              data={data}
+              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            >
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke="var(--whatsapp-border-color)"
               />
-              <YAxis 
-                tick={{ fill: 'var(--whatsapp-text-secondary)', fontSize: 12 }}
-                axisLine={{ stroke: 'var(--whatsapp-border-color)' }}
+              <XAxis
+                dataKey="name"
+                tick={{ fill: "var(--whatsapp-text-secondary)", fontSize: 12 }}
+                axisLine={{ stroke: "var(--whatsapp-border-color)" }}
               />
-              <Tooltip 
+              <YAxis
+                tick={{ fill: "var(--whatsapp-text-secondary)", fontSize: 12 }}
+                axisLine={{ stroke: "var(--whatsapp-border-color)" }}
+              />
+              <Tooltip
                 contentStyle={{
-                  backgroundColor: 'var(--whatsapp-chat-bg)',
-                  border: '1px solid var(--whatsapp-border-color)',
-                  borderRadius: '6px',
-                  color: 'var(--whatsapp-text-primary)'
+                  backgroundColor: "var(--whatsapp-chat-bg)",
+                  border: "1px solid var(--whatsapp-border-color)",
+                  borderRadius: "6px",
+                  color: "var(--whatsapp-text-primary)",
                 }}
               />
               <Legend />
-              <Area 
-                type="monotone" 
-                dataKey="value" 
-                stroke={colors[2]} 
-                fill={colors[2]} 
+              <Area
+                type="monotone"
+                dataKey="value"
+                stroke={colors[2]}
+                fill={colors[2]}
                 fillOpacity={0.4}
                 strokeWidth={2}
               />
@@ -410,22 +573,22 @@ const AirlineChatbot: React.FC = () => {
 
     const headers = Object.keys(tableData[0] || {});
     const hasHorizontalScroll = headers.length > 5; // Support wide tables with many columns
-    
+
     // Generate meaningful title based on content or use provided title
     const getTableTitle = () => {
       if (tableTitle) return tableTitle;
-      
+
       // Infer title from table headers and content
-      if (headers.some(h => h.toLowerCase().includes('flight'))) {
-        return 'Airline Performance Report';
-      } else if (headers.some(h => h.toLowerCase().includes('passenger'))) {
-        return 'Passenger Analytics Report';
-      } else if (headers.some(h => h.toLowerCase().includes('route'))) {
-        return 'Route Performance Report';
-      } else if (headers.some(h => h.toLowerCase().includes('crew'))) {
-        return 'Crew Scheduling Report';
+      if (headers.some((h) => h.toLowerCase().includes("flight"))) {
+        return "Airline Performance Report";
+      } else if (headers.some((h) => h.toLowerCase().includes("passenger"))) {
+        return "Passenger Analytics Report";
+      } else if (headers.some((h) => h.toLowerCase().includes("route"))) {
+        return "Route Performance Report";
+      } else if (headers.some((h) => h.toLowerCase().includes("crew"))) {
+        return "Crew Scheduling Report";
       } else {
-        return 'Airline Data Report';
+        return "Airline Data Report";
       }
     };
 
@@ -441,36 +604,56 @@ const AirlineChatbot: React.FC = () => {
             </span>
           </div>
           <div className="table-actions">
-            <button 
+            <button
               className="download-btn csv"
-              onClick={() => downloadTableAsCSV(tableData, reportTitle.toLowerCase().replace(/\s+/g, '-'))}
+              onClick={() =>
+                downloadTableAsCSV(
+                  tableData,
+                  reportTitle.toLowerCase().replace(/\s+/g, "-"),
+                )
+              }
               title="Download as CSV"
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
                 <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
               </svg>
               CSV
             </button>
-            <button 
+            <button
               className="download-btn excel"
-              onClick={() => downloadTableAsExcel(tableData, reportTitle.toLowerCase().replace(/\s+/g, '-'))}
+              onClick={() =>
+                downloadTableAsExcel(
+                  tableData,
+                  reportTitle.toLowerCase().replace(/\s+/g, "-"),
+                )
+              }
               title="Download as Excel"
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
                 <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
               </svg>
               Excel
             </button>
           </div>
         </div>
-        <div className={`table-container ${hasHorizontalScroll ? 'horizontal-scroll' : ''}`}>
+        <div
+          className={`table-container ${hasHorizontalScroll ? "horizontal-scroll" : ""}`}
+        >
           <table className="chat-table">
             <thead>
               <tr>
                 {headers.map((header) => (
-                  <th key={header}>
-                    {header}
-                  </th>
+                  <th key={header}>{header}</th>
                 ))}
               </tr>
             </thead>
@@ -478,9 +661,7 @@ const AirlineChatbot: React.FC = () => {
               {tableData.map((row: any, index: number) => (
                 <tr key={index}>
                   {headers.map((header, cellIndex) => (
-                    <td key={cellIndex}>
-                      {row[header]}
-                    </td>
+                    <td key={cellIndex}>{row[header]}</td>
                   ))}
                 </tr>
               ))}
@@ -497,46 +678,47 @@ const AirlineChatbot: React.FC = () => {
       return parsed;
     } catch (error) {
       // If not valid JSON, treat as plain text
-      return { type: 'text', content };
+      return { type: "text", content };
     }
   };
 
   const renderMessageContent = (message: Message) => {
     // Handle AI responses with JSON format
-    if (message.type === 'bot' && message.content) {
+    if (message.type === "bot" && message.content) {
       const aiResponse = parseAIResponse(message.content);
-      
+
       if (aiResponse.type) {
         switch (aiResponse.type) {
-          case 'text':
-          case 'html':
+          case "text":
+          case "html":
             return (
               <div className="message-content">
-                <div 
+                <div
                   className="ai-html-content"
                   dangerouslySetInnerHTML={{ __html: aiResponse.content }}
                 />
               </div>
             );
-          
-          case 'table':
+
+          case "table":
             return (
               <div className="message-content">
                 {aiResponse.content && (
-                  <div 
+                  <div
                     className="ai-html-content"
                     dangerouslySetInnerHTML={{ __html: aiResponse.content }}
                   />
                 )}
-                {aiResponse.data && renderTable(aiResponse.data, aiResponse.title)}
+                {aiResponse.data &&
+                  renderTable(aiResponse.data, aiResponse.title)}
               </div>
             );
-          
-          case 'chart':
+
+          case "chart":
             return (
               <div className="message-content">
                 {aiResponse.content && (
-                  <div 
+                  <div
                     className="ai-html-content"
                     dangerouslySetInnerHTML={{ __html: aiResponse.content }}
                   />
@@ -544,11 +726,11 @@ const AirlineChatbot: React.FC = () => {
                 {aiResponse.data && renderChart(aiResponse.data)}
               </div>
             );
-          
+
           default:
             return (
               <div className="message-content">
-                <div 
+                <div
                   className="ai-html-content"
                   dangerouslySetInnerHTML={{ __html: aiResponse.content }}
                 />
@@ -559,7 +741,7 @@ const AirlineChatbot: React.FC = () => {
     }
 
     // Handle legacy table data format
-    if (message.data && message.type === 'bot' && message.data.data) {
+    if (message.data && message.type === "bot" && message.data.data) {
       return (
         <div className="message-content">
           <p>{message.content}</p>
@@ -569,21 +751,23 @@ const AirlineChatbot: React.FC = () => {
     }
 
     // Handle user messages with file attachments (no download option)
-    if (message.data && message.type === 'user') {
+    if (message.data && message.type === "user") {
       return (
         <div className="message-content">
           <p>{message.content}</p>
           {message.data.isImage && (
             <div className="attachment-preview">
-              <img 
-                src={message.data.fileUrl} 
+              <img
+                src={message.data.fileUrl}
                 alt={message.data.fileName}
                 className="attached-image"
-                onClick={() => window.open(message.data.fileUrl, '_blank')}
+                onClick={() => window.open(message.data.fileUrl, "_blank")}
               />
               <div className="file-details">
                 <span className="file-name">{message.data.fileName}</span>
-                <span className="file-size">({(message.data.fileSize / 1024).toFixed(1)} KB)</span>
+                <span className="file-size">
+                  ({(message.data.fileSize / 1024).toFixed(1)} KB)
+                </span>
               </div>
             </div>
           )}
@@ -591,13 +775,20 @@ const AirlineChatbot: React.FC = () => {
             <div className="attachment-preview">
               <div className="pdf-preview">
                 <div className="pdf-icon">
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                  <svg
+                    width="32"
+                    height="32"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
                     <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
                   </svg>
                 </div>
                 <div className="file-details">
                   <span className="file-name">{message.data.fileName}</span>
-                  <span className="file-size">({(message.data.fileSize / 1024).toFixed(1)} KB)</span>
+                  <span className="file-size">
+                    ({(message.data.fileSize / 1024).toFixed(1)} KB)
+                  </span>
                 </div>
               </div>
             </div>
@@ -606,13 +797,20 @@ const AirlineChatbot: React.FC = () => {
             <div className="attachment-preview">
               <div className="file-preview">
                 <div className="file-icon">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
                     <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
                   </svg>
                 </div>
                 <div className="file-details">
                   <span className="file-name">{message.data.fileName}</span>
-                  <span className="file-size">({(message.data.fileSize / 1024).toFixed(1)} KB)</span>
+                  <span className="file-size">
+                    ({(message.data.fileSize / 1024).toFixed(1)} KB)
+                  </span>
                 </div>
               </div>
             </div>
@@ -622,25 +820,27 @@ const AirlineChatbot: React.FC = () => {
     }
 
     // Handle bot messages with file attachments (with download option)
-    if (message.data && message.type === 'bot') {
+    if (message.data && message.type === "bot") {
       return (
         <div className="message-content">
           <p>{message.content}</p>
           {message.data.isImage && (
             <div className="attachment-preview">
-              <img 
-                src={message.data.fileUrl} 
+              <img
+                src={message.data.fileUrl}
                 alt={message.data.fileName}
                 className="attached-image"
-                onClick={() => window.open(message.data.fileUrl, '_blank')}
+                onClick={() => window.open(message.data.fileUrl, "_blank")}
               />
               <div className="file-details">
                 <span className="file-name">{message.data.fileName}</span>
-                <span className="file-size">({(message.data.fileSize / 1024).toFixed(1)} KB)</span>
-                <button 
+                <span className="file-size">
+                  ({(message.data.fileSize / 1024).toFixed(1)} KB)
+                </span>
+                <button
                   className="download-file-btn"
                   onClick={() => {
-                    const link = document.createElement('a');
+                    const link = document.createElement("a");
                     link.href = message.data.fileUrl;
                     link.download = message.data.fileName;
                     link.click();
@@ -655,17 +855,24 @@ const AirlineChatbot: React.FC = () => {
             <div className="attachment-preview">
               <div className="pdf-preview">
                 <div className="pdf-icon">
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                  <svg
+                    width="32"
+                    height="32"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
                     <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
                   </svg>
                 </div>
                 <div className="file-details">
                   <span className="file-name">{message.data.fileName}</span>
-                  <span className="file-size">({(message.data.fileSize / 1024).toFixed(1)} KB)</span>
-                  <button 
+                  <span className="file-size">
+                    ({(message.data.fileSize / 1024).toFixed(1)} KB)
+                  </span>
+                  <button
                     className="download-file-btn"
                     onClick={() => {
-                      const link = document.createElement('a');
+                      const link = document.createElement("a");
                       link.href = message.data.fileUrl;
                       link.download = message.data.fileName;
                       link.click();
@@ -681,17 +888,24 @@ const AirlineChatbot: React.FC = () => {
             <div className="attachment-preview">
               <div className="file-preview">
                 <div className="file-icon">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
                     <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
                   </svg>
                 </div>
                 <div className="file-details">
                   <span className="file-name">{message.data.fileName}</span>
-                  <span className="file-size">({(message.data.fileSize / 1024).toFixed(1)} KB)</span>
-                  <button 
+                  <span className="file-size">
+                    ({(message.data.fileSize / 1024).toFixed(1)} KB)
+                  </span>
+                  <button
                     className="download-file-btn"
                     onClick={() => {
-                      const link = document.createElement('a');
+                      const link = document.createElement("a");
                       link.href = message.data.fileUrl;
                       link.download = message.data.fileName;
                       link.click();
@@ -726,16 +940,18 @@ const AirlineChatbot: React.FC = () => {
             {historyItems.map((item) => (
               <div
                 key={item.id}
-                className={`history-item ${currentSession === item.id ? 'active' : ''}`}
+                className={`history-item ${currentSession === item.id ? "active" : ""}`}
                 onClick={() => handleHistoryItemClick(item.id)}
               >
                 {editingHistoryId === item.id ? (
                   <input
                     className="history-title editing"
                     defaultValue={item.title}
-                    onBlur={(e) => handleHistoryTitleEdit(item.id, e.target.value)}
+                    onBlur={(e) =>
+                      handleHistoryTitleEdit(item.id, e.target.value)
+                    }
                     onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
+                      if (e.key === "Enter") {
                         handleHistoryTitleEdit(item.id, e.currentTarget.value);
                       }
                     }}
@@ -750,7 +966,7 @@ const AirlineChatbot: React.FC = () => {
                       {item.title}
                     </div>
                     <div className="history-preview">
-                      {item.lastMessage || 'No messages yet'}
+                      {item.lastMessage || "No messages yet"}
                     </div>
                     <div className="history-date">
                       {item.date.toLocaleDateString()}
@@ -769,8 +985,8 @@ const AirlineChatbot: React.FC = () => {
           <div className="header-left">
             <div className="contact-info">
               <h1 className="contact-name">Airline Report Assistant</h1>
-              <span className={`status ${isOnline ? 'online' : 'offline'}`}>
-                {isOnline ? 'Online' : 'Offline'}
+              <span className={`status ${isOnline ? "online" : "offline"}`}>
+                {isOnline ? "Online" : "Offline"}
               </span>
             </div>
           </div>
@@ -784,7 +1000,10 @@ const AirlineChatbot: React.FC = () => {
             <div className="welcome-message">
               <div className="welcome-content">
                 <h3>Welcome to Airline Report Assistant!</h3>
-                <p>Ask me about airline reports, schedules, or analytics to get started.</p>
+                <p>
+                  Ask me about airline reports, schedules, or analytics to get
+                  started.
+                </p>
               </div>
             </div>
           ) : (
@@ -805,16 +1024,14 @@ const AirlineChatbot: React.FC = () => {
           )}
           {isLoading && (
             <div className="whatsapp-message bot">
-              {renderAvatar('bot')}
+              {renderAvatar("bot")}
               <div className="message-bubble">
                 <div className="typing-indicator">
                   <span></span>
                   <span></span>
                   <span></span>
                 </div>
-                <div className="message-time">
-                  {formatTime(new Date())}
-                </div>
+                <div className="message-time">{formatTime(new Date())}</div>
               </div>
             </div>
           )}
@@ -827,7 +1044,7 @@ const AirlineChatbot: React.FC = () => {
               <div className="file-info">
                 <span className="file-icon">📎</span>
                 <span className="file-name">{selectedFile.name}</span>
-                <button 
+                <button
                   className="remove-file"
                   onClick={removeSelectedFile}
                   type="button"
@@ -841,7 +1058,7 @@ const AirlineChatbot: React.FC = () => {
             <input
               ref={fileInputRef}
               type="file"
-              style={{ display: 'none' }}
+              style={{ display: "none" }}
               onChange={handleFileSelect}
               accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.gif,.svg,.webp,.mp4,.mp3,.zip,.rar,.xlsx,.csv"
             />
@@ -851,7 +1068,12 @@ const AirlineChatbot: React.FC = () => {
               disabled={isLoading}
               type="button"
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
                 <path d="M16.5,6V17.5A4,4 0 0,1 12.5,21.5A4,4 0 0,1 8.5,17.5V5A2.5,2.5 0 0,1 11,2.5A2.5,2.5 0 0,1 13.5,5V15.5A1,1 0 0,1 12.5,16.5A1,1 0 0,1 11.5,15.5V6H10V15.5A2.5,2.5 0 0,0 12.5,18A2.5,2.5 0 0,0 15,15.5V5A4,4 0 0,0 11,1A4,4 0 0,0 7,5V17.5A5.5,5.5 0 0,0 12.5,23A5.5,5.5 0 0,0 18,17.5V6H16.5Z" />
               </svg>
             </button>
@@ -870,7 +1092,12 @@ const AirlineChatbot: React.FC = () => {
               onClick={handleSendMessage}
               disabled={(!inputValue.trim() && !selectedFile) || isLoading}
             >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
                 <path d="M2,21L23,12L2,3V10L17,12L2,14V21Z" />
               </svg>
             </button>
