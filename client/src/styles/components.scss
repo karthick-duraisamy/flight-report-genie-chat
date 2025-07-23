@@ -779,7 +779,7 @@ body {
         padding: 12px 10px; /* Increased padding for better spacing */
         text-align: left;
         border-bottom: 1px solid var(--whatsapp-border-color);
-        border-right: 1px solid rgba(0, 0, 0, 0.05); /* Subtle column separation */
+        border-right: 1px solid var(--whatsapp-border-color); /* Use theme border color */
         overflow: hidden;
         text-overflow: ellipsis;
         word-wrap: break-word;
@@ -789,8 +789,8 @@ body {
 
       th {
         font-weight: 700; /* Bolder headers */
-        color: var(--whatsapp-text-primary);
-        background-color: var(--whatsapp-input-bg);
+        color: var(--whatsapp-text-primary) !important;
+        background-color: var(--whatsapp-input-bg) !important;
         white-space: nowrap;
         font-size: 12px; /* Increased from 10px */
         text-transform: uppercase;
@@ -799,14 +799,15 @@ body {
       }
 
       td {
-        color: var(--whatsapp-text-primary);
+        color: var(--whatsapp-text-primary) !important;
+        background-color: var(--whatsapp-chat-bg) !important;
         white-space: nowrap;
         font-size: 12px; /* Increased from 10px */
         font-weight: 500; /* Slightly bolder text */
       }
 
       tr:hover td {
-        background-color: var(--whatsapp-input-bg);
+        background-color: var(--whatsapp-input-bg) !important;
         transform: scale(1.001); /* Subtle hover effect */
         transition: all 0.2s ease;
       }
@@ -847,8 +848,8 @@ body {
       }
 
       // Alternating row colors for better readability
-      tbody tr:nth-child(even) {
-        background-color: rgba(0, 0, 0, 0.02);
+      tbody tr:nth-child(even) td {
+        background-color: var(--whatsapp-input-bg) !important;
       }
     }
   }
