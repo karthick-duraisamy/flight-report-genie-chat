@@ -15,7 +15,50 @@ interface HistoryState {
 }
 
 const initialState: HistoryState = {
-  items: [],
+  items: [
+    {
+      id: '1',
+      title: 'Flight Delay Analysis Report',
+      date: new Date('2024-01-20'),
+      messageCount: 8,
+      lastMessage: 'Generated comprehensive delay analysis for Q4 2023...'
+    },
+    {
+      id: '2',
+      title: 'Passenger Satisfaction Survey',
+      date: new Date('2024-01-19'),
+      messageCount: 12,
+      lastMessage: 'Customer feedback analysis shows 85% satisfaction rate...'
+    },
+    {
+      id: '3',
+      title: 'Route Performance Metrics',
+      date: new Date('2024-01-18'),
+      messageCount: 6,
+      lastMessage: 'Top performing routes identified for optimization...'
+    },
+    {
+      id: '4',
+      title: 'Aircraft Utilization Report',
+      date: new Date('2024-01-17'),
+      messageCount: 15,
+      lastMessage: 'Fleet efficiency metrics and recommendations...'
+    },
+    {
+      id: '5',
+      title: 'Seasonal Demand Forecast',
+      date: new Date('2024-01-16'),
+      messageCount: 9,
+      lastMessage: 'Summer 2024 travel demand predictions and capacity planning...'
+    },
+    {
+      id: '6',
+      title: 'Baggage Handling Analytics',
+      date: new Date('2024-01-15'),
+      messageCount: 7,
+      lastMessage: 'Baggage processing time analysis and improvement suggestions...'
+    }
+  ],
   isExpanded: true, // Default to expanded as requested
 };
 
