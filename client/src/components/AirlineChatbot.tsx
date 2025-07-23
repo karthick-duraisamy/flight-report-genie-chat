@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/store';
-import { addMessage, setCurrentSession } from '@/store/slices/chatSlice';
+import { addMessage, setCurrentSession, loadConversationMessages } from '@/store/slices/chatSlice';
 import { addHistoryItem, updateHistoryTitle } from '@/store/slices/historySlice';
 import { useGetReportsQuery, useGetTemplatesQuery } from '@/store/api/chatApi';
 import { useTheme } from '@/hooks/useTheme';
@@ -102,7 +102,7 @@ const AirlineChatbot: React.FC = () => {
 
   const handleHistoryItemClick = (itemId: string) => {
     dispatch(setCurrentSession(itemId));
-    // In a real app, we would load the messages for this session
+    dispatch(loadConversationMessages(itemId));
   };
 
   const handleHistoryTitleEdit = (itemId: string, newTitle: string) => {
