@@ -532,9 +532,6 @@ const AirlineChatbot: React.FC = () => {
         <div className="table-header">
           <div className="table-info">
             <h4 className="table-title">{reportTitle}</h4>
-            <span className="table-stats">
-              {tableData.length} rows × {headers.length} columns
-            </span>
           </div>
           <div className="table-actions">
             <button
