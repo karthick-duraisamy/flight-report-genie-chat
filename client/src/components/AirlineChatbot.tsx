@@ -141,7 +141,7 @@ const AirlineChatbot: React.FC = () => {
         messageContent.toLowerCase().includes("report")
       ) {
         // Table response
-        const botContent = JSON.stringify({
+        botContent = JSON.stringify({
           type: "table",
           title: "Airline Performance Report - Extended",
           content: "<p>Here is the airline performance report:</p>",
