@@ -31,7 +31,7 @@
   --whatsapp-border-color: #2a3942;
   --whatsapp-text-primary: #e9edef;
   --whatsapp-text-secondary: #8696a0;
-  --whatsapp-user-bubble: #005c4b;
+  --whatsapp-user-bubble: linear-gradient(135deg, #005c4b 0%, #004d40 100%);
   --whatsapp-bot-bubble: #202c33;
   --whatsapp-input-bg: #2a3942;
   --whatsapp-header-bg: #202c33;
@@ -46,7 +46,7 @@
   --whatsapp-border-color: #fbbf24;
   --whatsapp-text-primary: #92400e;
   --whatsapp-text-secondary: #d97706;
-  --whatsapp-user-bubble: #fcd34d;
+  --whatsapp-user-bubble: linear-gradient(135deg, #fcd34d 0%, #f59e0b 100%);
   --whatsapp-bot-bubble: #ffffff;
   --whatsapp-input-bg: #fef3c7;
   --whatsapp-header-bg: #fef3c7;
@@ -304,13 +304,26 @@ body {
     }
 
     .message-bubble {
-      background-color: var(--whatsapp-user-bubble);
-      color: var(--whatsapp-text-primary);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
       border-radius: 18px 4px 18px 18px;
       max-width: 70%;
       order: 1;
       padding: 12px 16px;
-      box-shadow: 0 1px 2px var(--whatsapp-shadow);
+      box-shadow: 0 2px 8px rgba(102, 126, 234, 0.25);
+      position: relative;
+      
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+        border-radius: inherit;
+        pointer-events: none;
+      }
     }
   }
 
@@ -348,15 +361,50 @@ body {
     flex-shrink: 0;
     align-self: flex-end;
     margin-bottom: 2px;
+    position: relative;
 
     &.user-avatar {
-      background: var(--whatsapp-green);
+      background: linear-gradient(135deg, var(--whatsapp-green) 0%, var(--whatsapp-green-hover) 100%);
       color: white;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+      .avatar-initials {
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+      }
     }
 
     &.bot-avatar {
-      background: #2196F3;
+      background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
       color: white;
+      box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
+
+      .ai-avatar-animation {
+        position: relative;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .ai-icon {
+          width: 20px;
+          height: 20px;
+          z-index: 2;
+          animation: aiIconPulse 2s infinite ease-in-out;
+        }
+
+        .ai-pulse-ring {
+          position: absolute;
+          width: 32px;
+          height: 32px;
+          border: 2px solid rgba(255, 255, 255, 0.3);
+          border-radius: 50%;
+          animation: aiPulseRing 2s infinite ease-out;
+          z-index: 1;
+        }
+      }
     }
 
     svg {
@@ -486,11 +534,40 @@ body {
 
 .message-time {
   font-size: var(--text-xs);
-  color: var(--whatsapp-text-secondary);
+  color: rgba(255, 255, 255, 0.8);
   text-align: right;
   margin-top: 8px;
-  opacity: 0.8;
+  opacity: 0.9;
   line-height: 1;
+  font-weight: 500;
+}
+
+.whatsapp-message.bot .message-time {
+  color: var(--whatsapp-text-secondary);
+  opacity: 0.8;
+}
+
+// AI Avatar Animations
+@keyframes aiIconPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+@keyframes aiPulseRing {
+  0% {
+    transform: scale(0.8);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.3);
+    opacity: 0;
+  }
 }
 
 // AI HTML content styles
