@@ -117,6 +117,7 @@ const AirlineChatbot: React.FC = () => {
         // Table response
         botContent = JSON.stringify({
           type: 'table',
+          title: 'Airline Performance Report',
           content: '<p>Here is the airline performance report:</p>',
           data: reports?.[0]?.data || [
             { "Flight": "AA101", "Route": "NYC-LAX", "Status": "On Time", "Passengers": 150 },
@@ -132,11 +133,15 @@ const AirlineChatbot: React.FC = () => {
           data: {
             type: 'bar',
             data: [
-              { name: 'On Time', value: 85 },
-              { name: 'Delayed', value: 12 },
-              { name: 'Cancelled', value: 3 }
+              { name: 'On Time', value: 85, fill: '#10b981' },
+              { name: 'Delayed', value: 12, fill: '#f59e0b' },
+              { name: 'Cancelled', value: 3, fill: '#ef4444' }
             ],
-            config: { title: 'Flight Performance' }
+            config: { 
+              title: 'Flight Performance Analysis',
+              showTooltip: true,
+              showLegend: true
+            }
           }
         });
       } else {
@@ -398,18 +403,39 @@ const AirlineChatbot: React.FC = () => {
     );
   };
 
-  const renderTable = (tableData: any) => {
+  const renderTable = (tableData: any, tableTitle?: string) => {
     if (!tableData || !Array.isArray(tableData) || tableData.length === 0) {
       return <p>No table data available</p>;
     }
 
     const headers = Object.keys(tableData[0] || {});
-    const hasHorizontalScroll = headers.length > 8; // More conservative threshold
+    const hasHorizontalScroll = headers.length > 5; // Support wide tables with many columns
+    
+    // Generate meaningful title based on content or use provided title
+    const getTableTitle = () => {
+      if (tableTitle) return tableTitle;
+      
+      // Infer title from table headers and content
+      if (headers.some(h => h.toLowerCase().includes('flight'))) {
+        return 'Airline Performance Report';
+      } else if (headers.some(h => h.toLowerCase().includes('passenger'))) {
+        return 'Passenger Analytics Report';
+      } else if (headers.some(h => h.toLowerCase().includes('route'))) {
+        return 'Route Performance Report';
+      } else if (headers.some(h => h.toLowerCase().includes('crew'))) {
+        return 'Crew Scheduling Report';
+      } else {
+        return 'Airline Data Report';
+      }
+    };
+
+    const reportTitle = getTableTitle();
 
     return (
       <div className="table-wrapper">
         <div className="table-header">
           <div className="table-info">
+            <h4 className="table-title">{reportTitle}</h4>
             <span className="table-stats">
               {tableData.length} rows × {headers.length} columns
             </span>
@@ -417,7 +443,7 @@ const AirlineChatbot: React.FC = () => {
           <div className="table-actions">
             <button 
               className="download-btn csv"
-              onClick={() => downloadTableAsCSV(tableData, 'airline-report')}
+              onClick={() => downloadTableAsCSV(tableData, reportTitle.toLowerCase().replace(/\s+/g, '-'))}
               title="Download as CSV"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -427,7 +453,7 @@ const AirlineChatbot: React.FC = () => {
             </button>
             <button 
               className="download-btn excel"
-              onClick={() => downloadTableAsExcel(tableData, 'airline-report')}
+              onClick={() => downloadTableAsExcel(tableData, reportTitle.toLowerCase().replace(/\s+/g, '-'))}
               title="Download as Excel"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -502,7 +528,7 @@ const AirlineChatbot: React.FC = () => {
                     dangerouslySetInnerHTML={{ __html: aiResponse.content }}
                   />
                 )}
-                {aiResponse.data && renderTable(aiResponse.data)}
+                {aiResponse.data && renderTable(aiResponse.data, aiResponse.title)}
               </div>
             );
           
@@ -537,7 +563,7 @@ const AirlineChatbot: React.FC = () => {
       return (
         <div className="message-content">
           <p>{message.content}</p>
-          {renderTable(message.data.data)}
+          {renderTable(message.data.data, message.data.title)}
         </div>
       );
     }
