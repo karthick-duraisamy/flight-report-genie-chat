@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   addMessage,
   setCurrentSession,
@@ -23,6 +23,7 @@ import {
   Legend,
 } from "recharts";
 import * as XLSX from "xlsx";
+import { RootState } from "@/store";
 
 interface Message {
   id: string;
@@ -35,7 +36,7 @@ interface Message {
 const AirlineChatbot: React.FC = () => {
   const dispatch = useDispatch();
   const { currentTheme } = useTheme();
-  const { currentSession, messages } = useState<string | null>(null);
+  const { currentSession, messages } = useSelector((state: RootState) => state.chat);
 
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -75,7 +76,8 @@ const AirlineChatbot: React.FC = () => {
     };
   }, []);
 
-  const formatTime = (date: Date) => {
+  const formatTime = (timestamp: Date | string) => {
+    const date = timestamp instanceof Date ? timestamp : new Date(timestamp);
     return date.toLocaleTimeString("en-US", {
       hour: "2-digit",
       minute: "2-digit",
@@ -246,8 +248,7 @@ const AirlineChatbot: React.FC = () => {
 
   const handleNewChat = () => {
     // Clear current conversation context
-    // setMessages([]);
-    setCurrentSession(null);
+    dispatch(setCurrentSession(null));
     setInputValue("");
     setSelectedFile(null);
     setIsLoading(false);
@@ -876,50 +877,23 @@ const AirlineChatbot: React.FC = () => {
           <h2>Airline Assistant</h2>
         </div>
 
-        <div className="recent-actions">
-          <div className="section-header">
-            <h3>Recent Actions</h3>
-          </div>
-          <div className="history-list">
-            {/* {historyItems.map((item) => (
-              <div
-                key={item.id}
-                className={`history-item ${currentSession === item.id ? "active" : ""}`}
-                onClick={() => handleHistoryItemClick(item.id)}
-              >
-                {editingHistoryId === item.id ? (
-                  <input
-                    className="history-title editing"
-                    defaultValue={item.title}
-                    onBlur={(e) =>
-                      handleHistoryTitleEdit(item.id, e.target.value)
-                    }
-                    onKeyPress={(e) => {
-                      if (e.key === "Enter") {
-                        handleHistoryTitleEdit(item.id, e.currentTarget.value);
-                      }
-                    }}
-                    autoFocus
-                  />
-                ) : (
-                  <div className="history-content">
-                    <div
-                      className="history-title"
-                      onDoubleClick={() => setEditingHistoryId(item.id)}
-                    >
-                      {item.title}
-                    </div>
-                    <div className="history-preview">
-                      {item.lastMessage || "No messages yet"}
-                    </div>
-                    <div className="history-date">
-                      {item.date.toLocaleDateString()}
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))} */}
-          </div>
+        <div className="new-chat-section">
+          <button
+            className="new-chat-button"
+            onClick={handleNewChat}
+            disabled={isLoading}
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="new-chat-icon"
+            >
+              <path d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" />
+            </svg>
+            New Chat
+          </button>
         </div>
       </div>
 

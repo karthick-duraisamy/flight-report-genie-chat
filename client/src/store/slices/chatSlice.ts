@@ -4,7 +4,7 @@ export interface Message {
   id: string;
   type: 'user' | 'bot';
   content: string;
-  timestamp: string; // Changed to string
+  timestamp: string; // Keep as string for Redux serialization
   isHTML?: boolean;
   tableData?: any[];
   tableColumns?: any[];
@@ -260,14 +260,21 @@ const chatSlice = createSlice({
     setCurrentSession: (state, action: PayloadAction<string>) => {
       state.currentSession = action.payload;
     },
-    addMessage: (state, action: PayloadAction<Message>) => {
-      state.messages.push(action.payload);
+    addMessage: (state, action: PayloadAction<any>) => {
+      // Convert timestamp to string if it's a Date object
+      const message = {
+        ...action.payload,
+        timestamp: action.payload.timestamp instanceof Date 
+          ? action.payload.timestamp.toISOString() 
+          : action.payload.timestamp
+      };
+      state.messages.push(message);
       // Also add to conversation-specific messages if there's a current session
       if (state.currentSession) {
         if (!state.conversationMessages[state.currentSession]) {
           state.conversationMessages[state.currentSession] = [];
         }
-        state.conversationMessages[state.currentSession].push(action.payload);
+        state.conversationMessages[state.currentSession].push(message);
       }
     },
     loadConversationMessages: (state, action: PayloadAction<string>) => {
