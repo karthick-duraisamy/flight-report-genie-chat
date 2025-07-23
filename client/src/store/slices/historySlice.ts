@@ -57,6 +57,48 @@ const initialState: HistoryState = {
       date: new Date('2024-01-15'),
       messageCount: 7,
       lastMessage: 'Baggage processing time analysis and improvement suggestions...'
+    },
+    {
+      id: '7',
+      title: 'Crew Scheduling Optimization',
+      date: new Date('2024-01-14'),
+      messageCount: 11,
+      lastMessage: 'AI-powered crew scheduling reduces operational costs by 12%...'
+    },
+    {
+      id: '8',
+      title: 'Fuel Consumption Analysis',
+      date: new Date('2024-01-13'),
+      messageCount: 8,
+      lastMessage: 'Fuel efficiency improvements identified across fleet operations...'
+    },
+    {
+      id: '9',
+      title: 'Customer Loyalty Program Analytics',
+      date: new Date('2024-01-12'),
+      messageCount: 14,
+      lastMessage: 'Premium tier engagement increased by 18% this quarter...'
+    },
+    {
+      id: '10',
+      title: 'Maintenance Schedule Report',
+      date: new Date('2024-01-11'),
+      messageCount: 6,
+      lastMessage: 'Predictive maintenance reduces unexpected downtime...'
+    },
+    {
+      id: '11',
+      title: 'Revenue Management Dashboard',
+      date: new Date('2024-01-10'),
+      messageCount: 10,
+      lastMessage: 'Dynamic pricing optimization increased revenue by 8%...'
+    },
+    {
+      id: '12',
+      title: 'Airport Operations Report',
+      date: new Date('2024-01-09'),
+      messageCount: 13,
+      lastMessage: 'Ground handling efficiency metrics and improvement areas...'
     }
   ],
   isExpanded: true, // Default to expanded as requested

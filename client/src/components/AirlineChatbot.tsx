@@ -25,9 +25,11 @@ const AirlineChatbot: React.FC = () => {
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [editingHistoryId, setEditingHistoryId] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data: reports } = useGetReportsQuery();
   const { data: templates } = useGetTemplatesQuery();
@@ -51,18 +53,23 @@ const AirlineChatbot: React.FC = () => {
   };
 
   const handleSendMessage = async () => {
-    if (!inputValue.trim() || isLoading) return;
+    if ((!inputValue.trim() && !selectedFile) || isLoading) return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
       type: 'user',
-      content: inputValue.trim(),
+      content: inputValue.trim() || (selectedFile ? `📎 ${selectedFile.name}` : ''),
       timestamp: new Date(),
+      data: selectedFile ? { fileName: selectedFile.name, fileSize: selectedFile.size } : undefined,
     };
 
     dispatch(addMessage(userMessage));
     const messageContent = inputValue.trim();
     setInputValue('');
+    setSelectedFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
     setIsLoading(true);
 
     // Simulate bot response with animation delay
@@ -108,6 +115,44 @@ const AirlineChatbot: React.FC = () => {
   const handleHistoryTitleEdit = (itemId: string, newTitle: string) => {
     dispatch(updateHistoryTitle({ id: itemId, title: newTitle }));
     setEditingHistoryId(null);
+  };
+
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+    }
+  };
+
+  const handleAttachmentClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const removeSelectedFile = () => {
+    setSelectedFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const renderAvatar = (type: 'user' | 'bot') => {
+    if (type === 'user') {
+      return (
+        <div className="message-avatar user-avatar">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z" />
+          </svg>
+        </div>
+      );
+    } else {
+      return (
+        <div className="message-avatar bot-avatar">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12,2A2,2 0 0,1 14,4C14,4.74 13.6,5.39 13,5.73V7H14A7,7 0 0,1 21,14H22A1,1 0 0,1 23,15V18A1,1 0 0,1 22,19H21V20A2,2 0 0,1 19,22H5A2,2 0 0,1 3,20V19H2A1,1 0 0,1 1,18V15A1,1 0 0,1 2,14H3A7,7 0 0,1 10,7H11V5.73C10.4,5.39 10,4.74 10,4A2,2 0 0,1 12,2M7.5,13A2.5,2.5 0 0,0 5,15.5A2.5,2.5 0 0,0 7.5,18A2.5,2.5 0 0,0 10,15.5A2.5,2.5 0 0,0 7.5,13M16.5,13A2.5,2.5 0 0,0 14,15.5A2.5,2.5 0 0,0 16.5,18A2.5,2.5 0 0,0 19,15.5A2.5,2.5 0 0,0 16.5,13Z" />
+          </svg>
+        </div>
+      );
+    }
   };
 
   const renderMessageContent = (message: Message) => {
@@ -229,6 +274,7 @@ const AirlineChatbot: React.FC = () => {
                 key={message.id}
                 className={`whatsapp-message ${message.type}`}
               >
+                {renderAvatar(message.type)}
                 <div className="message-bubble">
                   {renderMessageContent(message)}
                   <div className="message-time">
@@ -240,6 +286,7 @@ const AirlineChatbot: React.FC = () => {
           )}
           {isLoading && (
             <div className="whatsapp-message bot">
+              {renderAvatar('bot')}
               <div className="message-bubble">
                 <div className="typing-indicator">
                   <span></span>
@@ -256,7 +303,39 @@ const AirlineChatbot: React.FC = () => {
         </div>
 
         <div className="whatsapp-input">
+          {selectedFile && (
+            <div className="attachment-preview">
+              <div className="file-info">
+                <span className="file-icon">📎</span>
+                <span className="file-name">{selectedFile.name}</span>
+                <button 
+                  className="remove-file"
+                  onClick={removeSelectedFile}
+                  type="button"
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+          )}
           <div className="input-container">
+            <input
+              ref={fileInputRef}
+              type="file"
+              style={{ display: 'none' }}
+              onChange={handleFileSelect}
+              accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.gif"
+            />
+            <button
+              className="attachment-button"
+              onClick={handleAttachmentClick}
+              disabled={isLoading}
+              type="button"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M16.5,6V17.5A4,4 0 0,1 12.5,21.5A4,4 0 0,1 8.5,17.5V5A2.5,2.5 0 0,1 11,2.5A2.5,2.5 0 0,1 13.5,5V15.5A1,1 0 0,1 12.5,16.5A1,1 0 0,1 11.5,15.5V6H10V15.5A2.5,2.5 0 0,0 12.5,18A2.5,2.5 0 0,0 15,15.5V5A4,4 0 0,0 11,1A4,4 0 0,0 7,5V17.5A5.5,5.5 0 0,0 12.5,23A5.5,5.5 0 0,0 18,17.5V6H16.5Z" />
+              </svg>
+            </button>
             <input
               ref={chatInputRef}
               type="text"
@@ -270,7 +349,7 @@ const AirlineChatbot: React.FC = () => {
             <button
               className="send-button"
               onClick={handleSendMessage}
-              disabled={!inputValue.trim() || isLoading}
+              disabled={(!inputValue.trim() && !selectedFile) || isLoading}
             >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M2,21L23,12L2,3V10L17,12L2,14V21Z" />

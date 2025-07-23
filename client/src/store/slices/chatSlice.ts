@@ -101,6 +101,132 @@ const initialState: ChatState = {
         content: 'Top performing routes identified for optimization. Routes NYC-LAX and CHI-MIA showing highest profitability and on-time performance.',
         timestamp: new Date('2024-01-18T11:20:30'),
       }
+    ],
+    '4': [
+      {
+        id: '4-1',
+        type: 'user',
+        content: 'Generate aircraft utilization report for our fleet',
+        timestamp: new Date('2024-01-17T10:00:00'),
+      },
+      {
+        id: '4-2',
+        type: 'bot',
+        content: 'Fleet efficiency metrics and recommendations generated. Average aircraft utilization is 78% with opportunities for improvement on regional routes.',
+        timestamp: new Date('2024-01-17T10:00:45'),
+      }
+    ],
+    '5': [
+      {
+        id: '5-1',
+        type: 'user',
+        content: 'I need seasonal demand forecasting for summer 2024',
+        timestamp: new Date('2024-01-16T13:15:00'),
+      },
+      {
+        id: '5-2',
+        type: 'bot',
+        content: 'Summer 2024 travel demand predictions and capacity planning completed. Expecting 25% increase in leisure travel bookings.',
+        timestamp: new Date('2024-01-16T13:16:00'),
+      }
+    ],
+    '6': [
+      {
+        id: '6-1',
+        type: 'user',
+        content: 'Analyze baggage handling performance',
+        timestamp: new Date('2024-01-15T16:30:00'),
+      },
+      {
+        id: '6-2',
+        type: 'bot',
+        content: 'Baggage processing time analysis and improvement suggestions provided. Average handling time reduced by 15% with new procedures.',
+        timestamp: new Date('2024-01-15T16:31:00'),
+      }
+    ],
+    '7': [
+      {
+        id: '7-1',
+        type: 'user',
+        content: 'Optimize crew scheduling for next month',
+        timestamp: new Date('2024-01-14T08:45:00'),
+      },
+      {
+        id: '7-2',
+        type: 'bot',
+        content: 'AI-powered crew scheduling reduces operational costs by 12% while ensuring compliance with regulations.',
+        timestamp: new Date('2024-01-14T08:46:00'),
+      }
+    ],
+    '8': [
+      {
+        id: '8-1',
+        type: 'user',
+        content: 'Show fuel consumption analysis',
+        timestamp: new Date('2024-01-13T12:20:00'),
+      },
+      {
+        id: '8-2',
+        type: 'bot',
+        content: 'Fuel efficiency improvements identified across fleet operations. Potential savings of 8% through route optimization.',
+        timestamp: new Date('2024-01-13T12:21:00'),
+      }
+    ],
+    '9': [
+      {
+        id: '9-1',
+        type: 'user',
+        content: 'Analyze customer loyalty program performance',
+        timestamp: new Date('2024-01-12T15:00:00'),
+      },
+      {
+        id: '9-2',
+        type: 'bot',
+        content: 'Premium tier engagement increased by 18% this quarter. Recommendations for enhancing member benefits provided.',
+        timestamp: new Date('2024-01-12T15:01:00'),
+      }
+    ],
+    '10': [
+      {
+        id: '10-1',
+        type: 'user',
+        content: 'Generate maintenance schedule report',
+        timestamp: new Date('2024-01-11T09:30:00'),
+      },
+      {
+        id: '10-2',
+        type: 'bot',
+        content: 'Predictive maintenance reduces unexpected downtime by 30%. Optimized schedule for next quarter prepared.',
+        timestamp: new Date('2024-01-11T09:31:00'),
+      }
+    ],
+    '11': [
+      {
+        id: '11-1',
+        type: 'user',
+        content: 'Show revenue management dashboard',
+        timestamp: new Date('2024-01-10T14:15:00'),
+      },
+      {
+        id: '11-2',
+        type: 'bot',
+        content: 'Dynamic pricing optimization increased revenue by 8%. Market analysis and competitor pricing insights included.',
+        timestamp: new Date('2024-01-10T14:16:00'),
+      }
+    ],
+    '12': [
+      {
+        id: '12-1',
+        type: 'user',
+        content: 'Airport operations efficiency report needed',
+        timestamp: new Date('2024-01-09T11:00:00'),
+      },
+      {
+        id: '12-2',
+        type: 'bot',
+        content: 'Ground handling efficiency metrics and improvement areas identified. Turnaround time reduced by 12 minutes on average.',
+        timestamp: new Date('2024-01-09T11:01:00'),
+      }
     ]
   },
   isLoading: false,
