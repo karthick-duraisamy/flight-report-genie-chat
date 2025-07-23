@@ -1,15 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "@/store";
+import { useDispatch } from "react-redux";
 import {
   addMessage,
   setCurrentSession,
   loadConversationMessages,
 } from "@/store/slices/chatSlice";
-import {
-  addHistoryItem,
-  updateHistoryTitle,
-} from "@/store/slices/historySlice";
 import { useGetReportsQuery, useGetTemplatesQuery } from "@/store/api/chatApi";
 import { useTheme } from "@/hooks/useTheme";
 import ThemeSelector from "./ThemeSelector";
@@ -40,16 +35,10 @@ interface Message {
 const AirlineChatbot: React.FC = () => {
   const dispatch = useDispatch();
   const { currentTheme } = useTheme();
-  const { currentSession, messages } = useSelector(
-    (state: RootState) => state.chat,
-  );
-  const { items: historyItems, isExpanded } = useSelector(
-    (state: RootState) => state.history,
-  );
+  const { currentSession, messages } = useState<string | null>(null);
 
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [editingHistoryId, setEditingHistoryId] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
 
@@ -217,17 +206,17 @@ const AirlineChatbot: React.FC = () => {
       if (!currentSession) {
         const sessionId = Date.now().toString();
         dispatch(setCurrentSession(sessionId));
-        dispatch(
-          addHistoryItem({
-            id: sessionId,
-            title:
-              messageContent.slice(0, 50) +
-              (messageContent.length > 50 ? "..." : ""),
-            date: new Date(),
-            messageCount: 2,
-            lastMessage: botMessage.content.slice(0, 100) + "...",
-          }),
-        );
+        // dispatch(
+        //   addHistoryItem({
+        //     id: sessionId,
+        //     title:
+        //       messageContent.slice(0, 50) +
+        //       (messageContent.length > 50 ? "..." : ""),
+        //     date: new Date(),
+        //     messageCount: 2,
+        //     lastMessage: botMessage.content.slice(0, 100) + "...",
+        //   }),
+        // );
       }
     }, 1000);
   };
@@ -239,14 +228,30 @@ const AirlineChatbot: React.FC = () => {
     }
   };
 
-  const handleHistoryItemClick = (itemId: string) => {
-    dispatch(setCurrentSession(itemId));
-    dispatch(loadConversationMessages(itemId));
+  const handleHistoryItemClick = (sessionId: string) => {
+    setCurrentSession(sessionId);
+    // Load messages for this session
+    // This will be implemented when backend API is ready
   };
 
-  const handleHistoryTitleEdit = (itemId: string, newTitle: string) => {
-    dispatch(updateHistoryTitle({ id: itemId, title: newTitle }));
-    setEditingHistoryId(null);
+  const handleHistoryTitleEdit = (sessionId: string, newTitle: string) => {
+    // if (newTitle.trim() && newTitle !== historyItems.find(item => item.id === sessionId)?.title) {
+    //   dispatch(updateHistoryTitle({ id: sessionId, title: newTitle.trim() }));
+    // }
+    // setEditingHistoryId(null);
+  };
+
+  const handleNewChat = () => {
+    // Clear current conversation context
+    // setMessages([]);
+    setCurrentSession(null);
+    setInputValue('');
+    setSelectedFile(null);
+    setIsLoading(false);
+    // Focus on input for immediate use
+    if (chatInputRef.current) {
+      chatInputRef.current.focus();
+    }
   };
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -325,7 +330,7 @@ const AirlineChatbot: React.FC = () => {
       // Mock user name - in real app, get from user context/auth
       const userName = "John Doe"; // Replace with actual user name from authentication
       const userInitials = getUserInitials(userName);
-      
+
       return (
         <div className="message-avatar user-avatar">
           <span className="avatar-initials">{userInitials}</span>
@@ -867,7 +872,7 @@ const AirlineChatbot: React.FC = () => {
             <h3>Recent Actions</h3>
           </div>
           <div className="history-list">
-            {historyItems.map((item) => (
+            {/* {historyItems.map((item) => (
               <div
                 key={item.id}
                 className={`history-item ${currentSession === item.id ? "active" : ""}`}
@@ -904,7 +909,7 @@ const AirlineChatbot: React.FC = () => {
                   </div>
                 )}
               </div>
-            ))}
+            ))} */}
           </div>
         </div>
       </div>
